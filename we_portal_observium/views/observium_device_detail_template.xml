@@ -399,7 +399,7 @@
                                         <button class="ms-auto btn btn-outline-secondary btn-sm py-0 px-1"
                                                 data-bs-toggle="modal" data-bs-target="#obsGraphModal"
                                                 t-attf-data-graph-src="/my/observium/{{ device.get('device_id') }}/graph/device_{{ sg_type }}?period=-1d"
-                                                t-attf-data-graph-title="{{ sg_type | title }}"
+                                                t-attf-data-graph-title="{{ sg_type.capitalize() if sg_type else '' }}"
                                                 title="View graph">
                                             <i class="fa fa-area-chart"/>
                                         </button>
