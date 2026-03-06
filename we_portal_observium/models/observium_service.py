@@ -41,7 +41,7 @@ class ObserviumService(models.AbstractModel):
         if not url or not username or not password:
             raise ValueError(
                 _('Observium (%s) is not fully configured. '
-                'Please set URL, username and password in Settings.') % env.upper()
+                  'Please set URL, username and password in Settings.') % env.upper()
             )
 
         return {
@@ -115,13 +115,22 @@ class ObserviumService(models.AbstractModel):
 
     @api.model
     def get_device(self, device_id):
-        data = self._get('devices')
-        devices_raw = data.get('devices', {})
-        device = devices_raw.get(str(device_id))
-        if device:
-            device.setdefault('device_id', str(device_id))
+        """
+        FIX #2: Use the direct /devices/<id> endpoint instead of fetching
+        all devices and filtering in Python. This is significantly faster
+        on large Observium installations.
+        """
+        try:
+            data = self._get('devices/{}'.format(device_id))
+            # Observium returns {"status": "ok", "device": {...}} for single-device requests
+            device = data.get('device') or data.get('devices', {}).get(str(device_id))
+            if device:
+                device.setdefault('device_id', str(device_id))
             return device
-        return None
+        except requests.exceptions.HTTPError as e:
+            if e.response is not None and e.response.status_code == 404:
+                return None
+            raise
 
     @api.model
     def get_device_addresses(self, device_id):
@@ -157,8 +166,7 @@ class ObserviumService(models.AbstractModel):
         return self._get_image('graph.php', params=params)
 
     # ------------------------------------------------------------------
-    # Alerts  GET /alerts/
-    # status: failed | failed_suppressed | delayed
+    # Alerts
     # ------------------------------------------------------------------
 
     @api.model
@@ -189,8 +197,7 @@ class ObserviumService(models.AbstractModel):
         return self._dict_or_list(data.get('alert_checks', {}))
 
     # ------------------------------------------------------------------
-    # Ports  GET /ports/
-    # state: up | down | admindown | shutdown
+    # Ports
     # ------------------------------------------------------------------
 
     @api.model
@@ -225,8 +232,7 @@ class ObserviumService(models.AbstractModel):
         return self._get_image('graph.php', params=params)
 
     # ------------------------------------------------------------------
-    # Sensors  GET /sensors/
-    # event: ok | alert | warn | ignore
+    # Sensors
     # ------------------------------------------------------------------
 
     @api.model
@@ -246,9 +252,7 @@ class ObserviumService(models.AbstractModel):
         return self.get_sensors(device_id=device_id)
 
     # ------------------------------------------------------------------
-    # Status  GET /status/
-    # Entities: BGP peers, fans, PSU, modules...
-    # event: ok | alert | warn | ignore
+    # Status
     # ------------------------------------------------------------------
 
     @api.model
@@ -268,8 +272,7 @@ class ObserviumService(models.AbstractModel):
         return self.get_status(device_id=device_id)
 
     # ------------------------------------------------------------------
-    # Inventory  GET /inventory/
-    # entPhysicalClass: chassis | module | port | powerSupply | fan ...
+    # Inventory
     # ------------------------------------------------------------------
 
     @api.model
@@ -287,8 +290,7 @@ class ObserviumService(models.AbstractModel):
         return self.get_inventory(device_id=device_id)
 
     # ------------------------------------------------------------------
-    # Neighbours  GET /neighbours/
-    # protocol: cdp | lldp | fdp ...
+    # Neighbours
     # ------------------------------------------------------------------
 
     @api.model
@@ -308,7 +310,7 @@ class ObserviumService(models.AbstractModel):
         return self.get_neighbours(device_id=device_id, active=1)
 
     # ------------------------------------------------------------------
-    # Counters  GET /counters/
+    # Counters
     # ------------------------------------------------------------------
 
     @api.model
@@ -324,7 +326,7 @@ class ObserviumService(models.AbstractModel):
         return self._dict_or_list(data.get('counters', {}))
 
     # ------------------------------------------------------------------
-    # Bills  GET /bills/
+    # Bills
     # ------------------------------------------------------------------
 
     @api.model
@@ -333,7 +335,7 @@ class ObserviumService(models.AbstractModel):
         return self._dict_or_list(data.get('bills', {}))
 
     # ------------------------------------------------------------------
-    # Groups  GET /groups/
+    # Groups
     # ------------------------------------------------------------------
 
     @api.model
@@ -350,7 +352,7 @@ class ObserviumService(models.AbstractModel):
         return self.get_groups(group_id=group_id)
 
     # ------------------------------------------------------------------
-    # Generic entity  GET /entity/<type>/<id>/
+    # Generic entity
     # ------------------------------------------------------------------
 
     @api.model

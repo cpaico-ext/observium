@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-import re
-
-from odoo import http, _
+from odoo import http
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.http import request
 
@@ -9,25 +7,30 @@ from odoo.http import request
 class PortalHomeController(CustomerPortal):
 
     def _get_accessible_dashboards(self):
-        """Return all dashboards accessible to the current portal user."""
+        """
+        Return all active dashboards accessible to the current portal user.
+
+        FIX #7: Uses a single ORM query with an SQL IN clause instead of
+        iterating roles and dashboards in Python (N+1 pattern).
+        """
         partner = request.env.user.partner_id
 
+        # Collect role IDs for this partner (as client or as contact)
         roles = request.env['portal.partner.role'].search([
             '|',
             ('contact_ids', 'in', partner.id),
             ('client_id', '=', partner.id),
-            ('dashboard_ids', '!=', False),
         ])
+        if not roles:
+            return []
 
-        seen = set()
-        dashboards = []
-        for role in roles:
-            for db in role.dashboard_ids:
-                if db.id not in seen and db.active:
-                    seen.add(db.id)
-                    dashboards.append(db)
+        # Single query: all active dashboards assigned to any of those roles
+        dashboards = request.env['portal.dashboard'].search([
+            ('active', '=', True),
+            ('id', 'in', roles.mapped('dashboard_ids').ids),
+        ], order='sequence, name')
 
-        return sorted(dashboards, key=lambda d: (d.sequence, d.name.lower()))
+        return dashboards
 
     def _prepare_portal_layout_values(self):
         """Inject accessible_dashboards into portal home context."""

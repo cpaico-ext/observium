@@ -13,13 +13,30 @@
                 </ol>
             </nav>
 
-            <!-- Error state: no device -->
+            <!-- Error state: device failed to load -->
             <t t-if="error and not device">
                 <div class="alert alert-danger d-flex gap-3 align-items-start">
                     <i class="fa fa-exclamation-triangle fa-2x mt-1 flex-shrink-0"/>
                     <div>
                         <strong>Error loading device</strong>
                         <p class="mb-0 small" t-esc="error"/>
+                    </div>
+                </div>
+            </t>
+
+            <!-- FIX #14: explicit empty state when device is None with no error -->
+            <t t-if="not device and not error">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="fa fa-question-circle fa-3x text-muted mb-3"/>
+                        <h4 class="text-muted">Device not found</h4>
+                        <p class="text-muted small">
+                            The requested device could not be found.
+                            It may have been removed from Observium.
+                        </p>
+                        <a href="/my/observium" class="btn btn-outline-primary btn-sm mt-2">
+                            <i class="fa fa-arrow-left me-1"/>Back to devices
+                        </a>
                     </div>
                 </div>
             </t>
@@ -57,10 +74,9 @@
                                 <i t-attf-class="fa {{ 'fa-check' if is_up else 'fa-times' }} me-1"/>
                                 <t t-esc="'Up' if is_up else 'Down'"/>
                             </span>
-                            <!-- Active alert badge -->
                             <t t-if="alerts_failed">
                                 <a href="#tab-alerts" class="badge bg-danger text-decoration-none obs-tab-link"
-                                data-bs-toggle="tab" data-bs-target="#tab-alerts">
+                                   data-bs-toggle="tab" data-bs-target="#tab-alerts">
                                     <i class="fa fa-bell me-1"/>
                                     <t t-esc="len(alerts_failed or [])"/> alert(s)
                                 </a>
@@ -75,7 +91,6 @@
 
                 <!-- KPI bar -->
                 <div class="obs-summary-bar mb-4">
-                    <!-- CPU -->
                     <div class="obs-stat">
                         <i class="fa fa-microchip text-primary"/>
                         <div>
@@ -85,7 +100,6 @@
                             <span class="obs-stat-label d-block">CPU</span>
                         </div>
                     </div>
-                    <!-- RAM -->
                     <div class="obs-stat">
                         <i class="fa fa-database text-primary"/>
                         <div>
@@ -95,7 +109,6 @@
                             <span class="obs-stat-label d-block">RAM</span>
                         </div>
                     </div>
-                    <!-- Ports up/down -->
                     <t t-if="ports">
                         <div class="obs-stat">
                             <i class="fa fa-ethernet text-primary"/>
@@ -109,7 +122,6 @@
                             </div>
                         </div>
                     </t>
-                    <!-- Alerts -->
                     <div class="obs-stat">
                         <i t-attf-class="fa fa-bell {{ 'text-danger' if alerts_failed else 'text-muted' }}"/>
                         <div>
@@ -119,14 +131,12 @@
                             <span class="obs-stat-label d-block">Active alerts</span>
                         </div>
                     </div>
-                    <!-- Uptime -->
-                    <t t-if="device.get('uptime')">
+                    <!-- FIX #10: Show human-readable uptime instead of raw seconds -->
+                    <t t-if="uptime_str and uptime_str != 'N/A'">
                         <div class="obs-stat">
                             <i class="fa fa-clock-o text-primary"/>
                             <div>
-                                <span class="obs-stat-value small">
-                                    <t t-esc="'{:,}s'.format(int(device.get('uptime', 0) or 0))"/>
-                                </span>
+                                <span class="obs-stat-value small" t-esc="uptime_str"/>
                                 <span class="obs-stat-label d-block">Uptime</span>
                             </div>
                         </div>
@@ -188,10 +198,9 @@
 
                 <div class="tab-content">
 
-                    <!-- TAB 1 OVERVIEW -->
+                    <!-- TAB 1: OVERVIEW -->
                     <div class="tab-pane fade show active" id="tab-overview">
 
-                        <!-- sysDescr -->
                         <t t-if="device.get('sysDescr')">
                             <div class="card border-1 shadow-sm mb-4">
                                 <div class="card-header bg-transparent fw-bold">
@@ -214,79 +223,57 @@
                                         <table class="table table-sm table-borderless mb-0">
                                             <tbody>
                                                 <tr>
-                                                    <td class="text-muted" width="40%">
-                                                        <i class="fa fa-fw fa-hashtag me-1"/>Device ID
-                                                    </td>
+                                                    <td class="text-muted" width="40%"><i class="fa fa-fw fa-hashtag me-1"/>Device ID</td>
                                                     <td><code t-esc="device.get('device_id', 'N/A')"/></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-server me-1"/>Hostname
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-server me-1"/>Hostname</td>
                                                     <td><code t-esc="device.get('hostname', 'N/A')"/></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-globe me-1"/>IP Address
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-globe me-1"/>IP Address</td>
                                                     <td><code t-esc="device.get('ip', 'N/A')"/></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-linux me-1"/>OS
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-linux me-1"/>OS</td>
                                                     <td>
                                                         <t t-if="device.get('os')">
                                                             <span class="badge bg-info bg-opacity-10 text-dark border border-dark border-opacity-5"
-                                                                t-esc="device.get('os')"/>
+                                                                  t-esc="device.get('os')"/>
                                                             <t t-if="device.get('distro')">
                                                                 <span class="ms-1 text-muted small"
-                                                                    t-esc="'{} {}'.format(device.get('distro',''), device.get('distro_ver','') or '').strip()"/>
+                                                                      t-esc="'{} {}'.format(device.get('distro',''), device.get('distro_ver','') or '').strip()"/>
                                                             </t>
                                                         </t>
                                                         <t t-else=""><span class="text-muted">N/A</span></t>
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-code me-1"/>Kernel
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-code me-1"/>Kernel</td>
                                                     <td class="small" t-esc="device.get('kernel', 'N/A')"/>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-microchip me-1"/>Hardware
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-microchip me-1"/>Hardware</td>
                                                     <td class="small" t-esc="device.get('hardware', 'N/A')"/>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-tag me-1"/>Type
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-tag me-1"/>Type</td>
                                                     <td t-esc="device.get('type', 'N/A')"/>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-map-marker me-1"/>Location
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-map-marker me-1"/>Location</td>
                                                     <td t-esc="device.get('location', 'N/A')"/>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-clock-o me-1"/>Last Polled
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-clock-o me-1"/>Last Polled</td>
                                                     <td class="small" t-esc="device.get('last_polled', 'N/A')"/>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-user me-1"/>Contact
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-user me-1"/>Contact</td>
                                                     <td class="small" t-esc="device.get('sysContact', 'N/A')"/>
                                                 </tr>
                                                 <tr>
-                                                    <td class="text-muted">
-                                                        <i class="fa fa-fw fa-exchange me-1"/>SNMP
-                                                    </td>
+                                                    <td class="text-muted"><i class="fa fa-fw fa-exchange me-1"/>SNMP</td>
                                                     <td class="small">
                                                         v<t t-esc="device.get('snmp_version', 'N/A')"/>
                                                         / port <t t-esc="device.get('snmp_port', '161')"/>
@@ -297,6 +284,7 @@
                                     </div>
                                 </div>
                             </div>
+
                             <!-- Performance -->
                             <div class="col-md-6">
                                 <div class="card border-1 shadow-sm h-100">
@@ -304,16 +292,13 @@
                                         <i class="fa fa-tachometer text-primary me-2"/>Performance
                                     </div>
                                     <div class="card-body">
-
                                         <!-- CPU -->
                                         <div class="mb-3">
                                             <div class="d-flex justify-content-between mb-1">
                                                 <small class="fw-bold">
                                                     <i class="fa fa-microchip me-1 text-muted"/>CPU Usage
                                                     <t t-if="processors">
-                                                        <span class="text-muted fw-normal">
-                                                            (<t t-esc="len(processors)"/> core(s))
-                                                        </span>
+                                                        <span class="text-muted fw-normal">(<t t-esc="len(processors)"/> core(s))</span>
                                                     </t>
                                                 </small>
                                                 <small t-attf-class="fw-bold {{ 'text-danger' if cpu_avg > 85 else 'text-warning' if cpu_avg > 60 else 'text-success' }}">
@@ -322,7 +307,7 @@
                                             </div>
                                             <div class="progress obs-progress">
                                                 <div t-attf-class="progress-bar {{ 'bg-danger' if cpu_avg > 85 else 'bg-warning' if cpu_avg > 60 else 'bg-primary' }}"
-                                                    t-attf-style="width: {{ str(cpu_avg) }}%"/>
+                                                     t-attf-style="width: {{ str(cpu_avg) }}%"/>
                                             </div>
                                             <t t-if="processors">
                                                 <small class="text-muted" t-esc="processors[0].get('processor_descr', '')"/>
@@ -347,7 +332,7 @@
                                             </div>
                                             <div class="progress obs-progress">
                                                 <div t-attf-class="progress-bar {{ 'bg-danger' if mem_perc > 85 else 'bg-warning' if mem_perc > 60 else 'bg-success' }}"
-                                                    t-attf-style="width: {{ str(mem_perc) }}%"/>
+                                                     t-attf-style="width: {{ str(mem_perc) }}%"/>
                                             </div>
                                         </div>
 
@@ -372,12 +357,11 @@
                                                     </div>
                                                     <div class="progress obs-progress">
                                                         <div t-attf-class="progress-bar {{ 'bg-danger' if stor_perc > 85 else 'bg-warning' if stor_perc > 60 else 'bg-info' }}"
-                                                            t-attf-style="width: {{ str(stor_perc) }}%"/>
+                                                             t-attf-style="width: {{ str(stor_perc) }}%"/>
                                                     </div>
                                                 </div>
                                             </t>
                                         </t>
-
                                     </div>
                                 </div>
                             </div>
@@ -392,12 +376,7 @@
                                 <div class="card-body p-0">
                                     <table class="table table-sm table-hover mb-0">
                                         <thead class="table-light">
-                                            <tr>
-                                                <th>Address</th>
-                                                <th>Prefix</th>
-                                                <th>Network</th>
-                                                <th>Type</th>
-                                            </tr>
+                                            <tr><th>Address</th><th>Prefix</th><th>Network</th><th>Type</th></tr>
                                         </thead>
                                         <tbody>
                                             <t t-foreach="addresses" t-as="addr">
@@ -428,7 +407,7 @@
                             </div>
                         </t>
 
-                        <!-- Statuses de entidades (BGP, fans, PSU...) -->
+                        <!-- Component Status -->
                         <t t-if="statuses">
                             <div class="card border-1 shadow-sm mb-4">
                                 <div class="card-header bg-transparent fw-bold">
@@ -437,12 +416,7 @@
                                 <div class="card-body p-0">
                                     <table class="table table-sm table-hover mb-0">
                                         <thead class="table-light">
-                                            <tr>
-                                                <th>Component</th>
-                                                <th>Class</th>
-                                                <th>State</th>
-                                                <th>Value</th>
-                                            </tr>
+                                            <tr><th>Component</th><th>Class</th><th>State</th><th>Value</th></tr>
                                         </thead>
                                         <tbody>
                                             <t t-foreach="statuses" t-as="st">
@@ -451,7 +425,7 @@
                                                     <td class="small" t-esc="st.get('status_descr') or st.get('status_name', 'N/A')"/>
                                                     <td>
                                                         <span class="badge bg-secondary bg-opacity-20 text-dark"
-                                                            t-esc="st.get('status_class', st.get('class', 'N/A'))"/>
+                                                              t-esc="st.get('status_class', st.get('class', 'N/A'))"/>
                                                     </td>
                                                     <td>
                                                         <span t-attf-class="badge {{ 'bg-success' if st_event == 'ok' else 'bg-danger' if st_event == 'alert' else 'bg-warning text-dark' }}">
@@ -470,7 +444,7 @@
                     </div><!-- /tab-overview -->
 
 
-                    <!-- TAB 2 INTERFACES / PORTS -->
+                    <!-- TAB 2: INTERFACES -->
                     <div class="tab-pane fade" id="tab-ports" t-if="ports">
                         <div class="card border-1 shadow-sm">
                             <div class="card-header bg-transparent d-flex align-items-center justify-content-between">
@@ -489,25 +463,15 @@
                             <div class="card-body p-0">
                                 <table class="table table-sm table-hover mb-0">
                                     <thead class="table-light">
-                                        <tr>
-                                            <th>Interface</th>
-                                            <th>Description</th>
-                                            <th>Speed</th>
-                                            <th>State</th>
-                                            <th>Graphs</th>
-                                        </tr>
+                                        <tr><th>Interface</th><th>Description</th><th>Speed</th><th>State</th><th>Graphs</th></tr>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="ports" t-as="port">
                                             <t t-set="p_up" t-value="port.get('ifOperStatus') == 'up'"/>
                                             <t t-set="p_admin_down" t-value="port.get('ifAdminStatus') == 'down'"/>
                                             <tr>
-                                                <td>
-                                                    <code class="small" t-esc="port.get('ifDescr') or port.get('port_label', 'N/A')"/>
-                                                </td>
-                                                <td class="small text-muted">
-                                                    <t t-esc="(port.get('ifAlias') or '')[:40]"/>
-                                                </td>
+                                                <td><code class="small" t-esc="port.get('ifDescr') or port.get('port_label', 'N/A')"/></td>
+                                                <td class="small text-muted"><t t-esc="(port.get('ifAlias') or '')[:40]"/></td>
                                                 <td class="small text-muted">
                                                     <t t-if="port.get('ifSpeed')">
                                                         <t t-esc="str(int(int(port.get('ifSpeed', 0) or 0) / 1e6)) + ' Mbps'"/>
@@ -526,11 +490,12 @@
                                                     </t>
                                                 </td>
                                                 <td>
+                                                    <!-- FIX #8: device_id is now part of the URL -->
                                                     <t t-if="port.get('port_id')">
-                                                        <a t-attf-href="/my/observium/port/{{ port.get('port_id') }}/graph/port_bits?period=-1d"
-                                                        class="btn btn-outline-primary btn-sm py-0 px-2"
-                                                        target="_blank"
-                                                        title="Traffic graph">
+                                                        <a t-attf-href="/my/observium/{{ device_id }}/port/{{ port.get('port_id') }}/graph/port_bits?period=-1d"
+                                                           class="btn btn-outline-primary btn-sm py-0 px-2"
+                                                           target="_blank"
+                                                           title="Traffic graph">
                                                             <i class="fa fa-area-chart"/>
                                                         </a>
                                                     </t>
@@ -544,39 +509,23 @@
                     </div><!-- /tab-ports -->
 
 
-                    <!-- TAB 3 SENSORS -->
+                    <!-- TAB 3: SENSORS -->
                     <div class="tab-pane fade" id="tab-sensors" t-if="sensors">
                         <t t-foreach="sensor_groups.items()" t-as="sg">
                             <t t-set="sg_type" t-value="sg[0]"/>
                             <t t-set="sg_items" t-value="sg[1]"/>
                             <div class="card border-1 shadow-sm mb-3">
                                 <div class="card-header bg-transparent fw-bold text-capitalize">
-                                    <t t-if="sg_type == 'temperature'">
-                                        <i class="fa fa-thermometer-half text-danger me-2"/>Temperature
-                                    </t>
-                                    <t t-elif="sg_type == 'voltage'">
-                                        <i class="fa fa-bolt text-warning me-2"/>Voltage
-                                    </t>
-                                    <t t-elif="sg_type == 'fanspeed'">
-                                        <i class="fa fa-refresh text-info me-2"/>Fan Speed
-                                    </t>
-                                    <t t-elif="sg_type == 'current'">
-                                        <i class="fa fa-plug text-primary me-2"/>Current
-                                    </t>
-                                    <t t-else="">
-                                        <i class="fa fa-tachometer text-muted me-2"/>
-                                        <t t-esc="sg_type"/>
-                                    </t>
+                                    <t t-if="sg_type == 'temperature'"><i class="fa fa-thermometer-half text-danger me-2"/>Temperature</t>
+                                    <t t-elif="sg_type == 'voltage'"><i class="fa fa-bolt text-warning me-2"/>Voltage</t>
+                                    <t t-elif="sg_type == 'fanspeed'"><i class="fa fa-refresh text-info me-2"/>Fan Speed</t>
+                                    <t t-elif="sg_type == 'current'"><i class="fa fa-plug text-primary me-2"/>Current</t>
+                                    <t t-else=""><i class="fa fa-tachometer text-muted me-2"/><t t-esc="sg_type"/></t>
                                 </div>
                                 <div class="card-body p-0">
                                     <table class="table table-sm table-hover mb-0">
                                         <thead class="table-light">
-                                            <tr>
-                                                <th>Sensor</th>
-                                                <th>Value</th>
-                                                <th>Limits (warn/alert)</th>
-                                                <th>State</th>
-                                            </tr>
+                                            <tr><th>Sensor</th><th>Value</th><th>Limits (warn/alert)</th><th>State</th></tr>
                                         </thead>
                                         <tbody>
                                             <t t-foreach="sg_items" t-as="sensor">
@@ -588,9 +537,7 @@
                                                         <span class="text-muted fw-normal ms-1" t-esc="sensor.get('sensor_unit', '')"/>
                                                     </td>
                                                     <td class="small text-muted">
-                                                        <t t-esc="sensor.get('sensor_limit_warn', '—')"/>
-                                                        /
-                                                        <t t-esc="sensor.get('sensor_limit', '—')"/>
+                                                        <t t-esc="sensor.get('sensor_limit_warn', '—')"/> / <t t-esc="sensor.get('sensor_limit', '—')"/>
                                                     </td>
                                                     <td>
                                                         <span t-attf-class="badge {{ 'bg-success' if s_event == 'ok' else 'bg-danger' if s_event == 'alert' else 'bg-warning text-dark' if s_event == 'warn' else 'bg-secondary' }}">
@@ -607,7 +554,7 @@
                     </div><!-- /tab-sensors -->
 
 
-                    <!-- TAB 4 ALERTS  -->
+                    <!-- TAB 4: ALERTS -->
                     <div class="tab-pane fade" id="tab-alerts" t-if="alerts">
                         <t t-if="alerts_failed">
                             <div class="alert alert-danger d-flex gap-2 align-items-center mb-3">
@@ -621,17 +568,11 @@
                                 <strong>No active alerts on this device</strong>
                             </div>
                         </t>
-
                         <div class="card border-1 shadow-sm">
                             <div class="card-body p-0">
                                 <table class="table table-sm table-hover mb-0">
                                     <thead class="table-light">
-                                        <tr>
-                                            <th>Alert</th>
-                                            <th>Entity</th>
-                                            <th>Status</th>
-                                            <th>Since</th>
-                                        </tr>
+                                        <tr><th>Alert</th><th>Entity</th><th>Status</th><th>Since</th></tr>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="alerts" t-as="alert">
@@ -640,7 +581,7 @@
                                                 <td class="small fw-bold" t-esc="alert.get('alert_test_name') or alert.get('alert_name', 'N/A')"/>
                                                 <td class="small">
                                                     <span class="badge bg-info bg-opacity-20 text-dark border border-dark border-opacity-10"
-                                                        t-esc="alert.get('entity_type', 'N/A')"/>
+                                                          t-esc="alert.get('entity_type', 'N/A')"/>
                                                     <span class="ms-1 text-muted" t-esc="alert.get('entity_name', '')"/>
                                                 </td>
                                                 <td>
@@ -658,7 +599,7 @@
                     </div><!-- /tab-alerts -->
 
 
-                    <!-- TAB 5 NEIGHBOURS -->
+                    <!-- TAB 5: NEIGHBOURS -->
                     <div class="tab-pane fade" id="tab-neighbours" t-if="neighbours">
                         <div class="card border-1 shadow-sm">
                             <div class="card-header bg-transparent fw-bold">
@@ -668,13 +609,7 @@
                             <div class="card-body p-0">
                                 <table class="table table-sm table-hover mb-0">
                                     <thead class="table-light">
-                                        <tr>
-                                            <th>Remote Host</th>
-                                            <th>Local Port</th>
-                                            <th>Remote Port</th>
-                                            <th>Protocol</th>
-                                            <th>Platform</th>
-                                        </tr>
+                                        <tr><th>Remote Host</th><th>Local Port</th><th>Remote Port</th><th>Protocol</th><th>Platform</th></tr>
                                     </thead>
                                     <tbody>
                                         <t t-foreach="neighbours" t-as="nb">
@@ -684,7 +619,7 @@
                                                 <td><code class="small" t-esc="nb.get('remote_port') or nb.get('remote_port_id', 'N/A')"/></td>
                                                 <td>
                                                     <span class="badge bg-secondary bg-opacity-20 text-dark"
-                                                        t-esc="nb.get('protocol', 'N/A').upper()"/>
+                                                          t-esc="nb.get('protocol', 'N/A').upper()"/>
                                                 </td>
                                                 <td class="small text-muted" t-esc="nb.get('platform', '')"/>
                                             </tr>
@@ -696,7 +631,7 @@
                     </div><!-- /tab-neighbours -->
 
 
-                    <!-- TAB 6 GRAPHS -->
+                    <!-- TAB 6: GRAPHS -->
                     <div class="tab-pane fade" id="tab-graphs">
                         <div class="card border-1 shadow-sm">
                             <div class="card-header bg-transparent fw-bold">
@@ -717,13 +652,19 @@
                                                     <i t-attf-class="fa {{ graph[2] }} me-2 text-primary"/>
                                                     <t t-esc="graph[1]"/>
                                                 </div>
+                                                <!-- FIX #11: spinner shown while image loads -->
                                                 <div class="obs-graph-body">
+                                                    <div class="obs-graph-spinner text-muted small">
+                                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"/>
+                                                        Loading graph...
+                                                    </div>
                                                     <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/{{ graph[0] }}?period=-1d"
-                                                        t-attf-data-graph="{{ graph[0] }}"
-                                                        t-attf-data-device="{{ device.get('device_id') }}"
-                                                        class="obs-graph-img img-fluid"
-                                                        onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;Graph not available&lt;/span&gt;'"
-                                                        alt="Loading graph..."/>
+                                                         t-attf-data-graph="{{ graph[0] }}"
+                                                         t-attf-data-device="{{ device.get('device_id') }}"
+                                                         class="obs-graph-img img-fluid d-none"
+                                                         onload="this.classList.remove('d-none'); this.previousElementSibling.remove();"
+                                                         onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;&lt;i class=&quot;fa fa-exclamation-circle me-1&quot;/&gt;Graph not available&lt;/span&gt;'"
+                                                         alt="Performance graph"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -739,7 +680,7 @@
             <!-- JS: period selector + deep-link from alerts badge -->
             <script>
                 (function() {
-                    // Period selector en tab Graphs
+                    // Period selector in Graphs tab
                     var selector = document.getElementById('obs-period-selector');
                     if (selector) {
                         selector.addEventListener('click', function(e) {
@@ -750,12 +691,18 @@
                                 b.classList.toggle('active', b === btn);
                             });
                             document.querySelectorAll('.obs-graph-img').forEach(function(img) {
+                                // Show spinner again while reloading
+                                img.classList.add('d-none');
+                                var spinner = document.createElement('div');
+                                spinner.className = 'obs-graph-spinner text-muted small';
+                                spinner.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Loading graph...';
+                                img.parentElement.insertBefore(spinner, img);
                                 img.src = '/my/observium/' + img.dataset.device + '/graph/'
                                         + img.dataset.graph + '?period=' + period;
                             });
                         });
                     }
-                    // Deep-link: Alert badge in header opens tab directly
+                    // Deep-link: Alert badge in header opens the alerts tab
                     document.querySelectorAll('.obs-tab-link').forEach(function(link) {
                         link.addEventListener('click', function(e) {
                             e.preventDefault();

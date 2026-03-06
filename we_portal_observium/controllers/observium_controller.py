@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pdb
 import logging
 
 import requests
@@ -19,7 +18,19 @@ class ObserviumPortalController(http.Controller):
     # ------------------------------------------------------------------
 
     def _get_partner_group_code(self):
+        """
+        Returns the Observium group code for the current user.
+        Checks direct partner field first, then falls back to role's client.
+        Centralised here so both controllers share the same logic.
+        """
         partner = request.env.user.partner_id
+        # Direct code on the partner (or its parent company)
+        code = partner.observium_group_code or (
+            partner.parent_id.observium_group_code if partner.parent_id else None
+        )
+        if code:
+            return code
+        # Fallback: look it up through the assigned portal role
         role = request.env['portal.partner.role'].sudo().search([
             '|',
             ('contact_ids', 'in', partner.id),
@@ -33,11 +44,12 @@ class ObserviumPortalController(http.Controller):
         return request.env['observium.service'].sudo()
 
     def _check_device_access(self, device_id, group_code):
+        """Return True if device_id belongs to the partner's group."""
         if not group_code:
             return True
         try:
             devices = self._observium().get_devices(group=group_code)
-            allowed_ids = [str(d.get('device_id')) for d in devices]
+            allowed_ids = {str(d.get('device_id')) for d in devices}
             return str(device_id) in allowed_ids
         except Exception:
             return False
@@ -45,9 +57,8 @@ class ObserviumPortalController(http.Controller):
     def _safe_fetch(self, fn, *args, label='data', **kwargs):
         """
         Executes fn(*args, **kwargs).
-        Returns (result, None) on success or ([], error_message) on non-fatal failure.
-        Never propagates exceptions—supplementary data must not break the page.
-        The caller decides whether to surface the error message to the user.
+        Returns (result, None) on success or ([], error_message) on failure.
+        Supplementary data must not break the page.
         """
         try:
             return fn(*args, **kwargs), None
@@ -107,7 +118,7 @@ class ObserviumPortalController(http.Controller):
         svc = self._observium()
         device = None
         error = None
-        
+
         try:
             device = svc.get_device(device_id)
             if not device:
@@ -130,7 +141,6 @@ class ObserviumPortalController(http.Controller):
         sensors,    warnings['sensors']    = self._safe_fetch(svc.get_device_sensors,    device_id, label='sensors')
         statuses,   warnings['statuses']   = self._safe_fetch(svc.get_device_status,     device_id, label='statuses')
         neighbours, warnings['neighbours'] = self._safe_fetch(svc.get_device_neighbours, device_id, label='neighbours')
-        # Remove sections that loaded successfully to keep the dict clean
         warnings = {k: v for k, v in warnings.items() if v}
 
         cpu_avg = 0
@@ -167,6 +177,9 @@ class ObserviumPortalController(http.Controller):
             ('device_uptime',  'Uptime',  'fa-clock-o'),
         ]
 
+        # FIX #10 — Format uptime as human-readable string
+        uptime_str = self._format_uptime(device.get('uptime') if device else None)
+
         values = {
             'device':        device,
             'addresses':     addresses,
@@ -189,14 +202,36 @@ class ObserviumPortalController(http.Controller):
             'mem_total_gb':  mem_total_gb,
             'graph_types':   graph_types,
             'device_id':     device_id,
+            'uptime_str':    uptime_str,
             'error':         error,
             'warnings':      warnings,
             'page_name':     'observium_device_detail',
         }
         return request.render('we_portal_observium.observium_device_detail_template', values)
 
+    @staticmethod
+    def _format_uptime(seconds):
+        """Convert raw uptime seconds to a human-readable string like '14d 6h 56m'."""
+        try:
+            secs = int(seconds or 0)
+        except (TypeError, ValueError):
+            return 'N/A'
+        if secs <= 0:
+            return 'N/A'
+        days    = secs // 86400
+        hours   = (secs % 86400) // 3600
+        minutes = (secs % 3600) // 60
+        parts = []
+        if days:
+            parts.append('%dd' % days)
+        if hours:
+            parts.append('%dh' % hours)
+        if minutes or not parts:
+            parts.append('%dm' % minutes)
+        return ' '.join(parts)
+
     # ------------------------------------------------------------------
-    # Device graphics  /my/observium/<device_id>/graph/<graph_type>
+    # Device graphs  /my/observium/<device_id>/graph/<graph_type>
     # ------------------------------------------------------------------
 
     @http.route('/my/observium/<string:device_id>/graph/<string:graph_type>',
@@ -217,32 +252,27 @@ class ObserviumPortalController(http.Controller):
         except requests.exceptions.RequestException as e:
             _logger.error('Observium graph fetch error: %s', e)
             raise NotFound()
+        # FIX #6 — increase cache to match Observium's 5-minute poll cycle
         return Response(image_bytes, content_type=content_type,
-                        headers={'Cache-Control': 'private, max-age=120'})
+                        headers={'Cache-Control': 'private, max-age=300'})
 
     # ------------------------------------------------------------------
-    # Port graphics  /my/observium/port/<port_id>/graph/<graph_type>
+    # Port graphs  /my/observium/<device_id>/port/<port_id>/graph/<graph_type>
+    # FIX #8 — device_id is now part of the URL so we reuse _check_device_access
+    # instead of fetching all ports to find the parent device.
     # ------------------------------------------------------------------
 
-    @http.route('/my/observium/port/<string:port_id>/graph/<string:graph_type>',
+    @http.route('/my/observium/<string:device_id>/port/<string:port_id>/graph/<string:graph_type>',
                 type='http', auth='user', website=True)
-    def port_graph(self, port_id, graph_type, period='-1d', **kw):
+    def port_graph(self, device_id, port_id, graph_type, period='-1d', **kw):
         allowed_types = {'port_bits', 'port_upkts', 'port_errors', 'port_nonecast'}
         if graph_type not in allowed_types:
             raise NotFound()
 
-        # Security: Verify that the port belongs to an authorized device
+        # Security: reuse device-level access check — no need to fetch all ports
         group_code = self._get_partner_group_code()
-        if group_code:
-            try:
-                ports = self._observium().get_ports(fields=['port_id', 'device_id'])
-                port = next((p for p in ports if str(p.get('port_id')) == str(port_id)), None)
-                if not port or not self._check_device_access(port.get('device_id'), group_code):
-                    raise Forbidden()
-            except (Forbidden, NotFound):
-                raise
-            except Exception:
-                raise Forbidden()
+        if not self._check_device_access(device_id, group_code):
+            raise Forbidden()
 
         try:
             image_bytes, content_type = self._observium().get_port_graph_image(
@@ -251,10 +281,10 @@ class ObserviumPortalController(http.Controller):
             _logger.error('Observium port graph error: %s', e)
             raise NotFound()
         return Response(image_bytes, content_type=content_type,
-                        headers={'Cache-Control': 'private, max-age=120'})
+                        headers={'Cache-Control': 'private, max-age=300'})
 
     # ------------------------------------------------------------------
-    # Alerts View  /my/observium/alerts
+    # Alerts  /my/observium/alerts
     # ------------------------------------------------------------------
 
     @http.route('/my/observium/alerts', type='http', auth='user', website=True)
@@ -264,7 +294,6 @@ class ObserviumPortalController(http.Controller):
         alerts = []
         error = None
 
-        # Get IDs of allowed devices for this client
         allowed_device_ids = None
         if group_code:
             try:
@@ -294,7 +323,7 @@ class ObserviumPortalController(http.Controller):
         return request.render('we_portal_observium.observium_alerts_template', values)
 
     # ------------------------------------------------------------------
-    # Service placeholder  /my/services
+    # Services placeholder  /my/services
     # ------------------------------------------------------------------
 
     @http.route('/my/services', type='http', auth='user', website=True)

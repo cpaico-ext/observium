@@ -5,13 +5,13 @@
         <t t-call="portal.portal_layout">
             <t t-set="o_portal_fullwidth_alert" t-value="False"/>
 
-            <!-- Breadcrumb -->
+            <!-- FIX #13: breadcrumb text uses translatable string -->
             <t t-set="additional_title" t-value="dashboard.name"/>
             <div id="portal_dashboard_breadcrumb" t-if="dashboard">
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="/my/home" t-esc="'Home'"/>
+                            <a href="/my/home">Home</a>
                         </li>
                         <li class="breadcrumb-item active" aria-current="page" t-esc="dashboard.name"/>
                     </ol>
@@ -36,24 +36,20 @@
                     </div>
                 </div>
 
-                <!-- Element -->
+                <!-- Elements -->
                 <t t-if="elements">
                     <div class="row g-4">
                         <t t-foreach="elements" t-as="element">
                             <div class="col-12">
                                 <t t-if="element.template_id">
-                                    <!-- Render the element's associated QWeb template -->
                                     <t t-call="{{element.template_id.xml_id}}"/>
                                 </t>
                                 <t t-else="">
-                                    <!-- Fallback: element without a template assigned -->
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-body text-center py-5">
                                             <i class="fa fa-puzzle-piece fa-3x text-muted mb-3"/>
                                             <h5 class="text-muted" t-esc="element.name"/>
-                                            <p class="text-muted small">
-                                                <t t-esc="'No template assigned to this element.'"/>
-                                            </p>
+                                            <p class="text-muted small">No template assigned to this element.</p>
                                         </div>
                                     </div>
                                 </t>
@@ -67,12 +63,8 @@
                     <div class="card border-0 shadow-sm">
                         <div class="card-body text-center py-5">
                             <i class="fa fa-inbox fa-3x text-muted mb-3"/>
-                            <h4 class="text-muted">
-                                <t t-esc="'This dashboard has no elements yet.'"/>
-                            </h4>
-                            <p class="text-muted">
-                                <t t-esc="'Contact your administrator to configure this dashboard.'"/>
-                            </p>
+                            <h4 class="text-muted">This dashboard has no elements yet.</h4>
+                            <p class="text-muted">Contact your administrator to configure this dashboard.</p>
                         </div>
                     </div>
                 </t>

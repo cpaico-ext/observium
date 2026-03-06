@@ -97,16 +97,16 @@
                                     <!-- Device info grid -->
                                     <div class="obs-device-info">
                                         <div class="obs-info-row">
-                                            <i class="fa fa-fw fa-network-wired text-muted"/>
+                                            <i class="fa fa-fw fa-globe text-muted"/>
                                             <code class="small" t-esc="device.get('ip', 'N/A')"/>
                                         </div>
                                         <div class="obs-info-row">
                                             <i class="fa fa-fw fa-cog text-muted"/>
                                             <span class="small">
-                                                <span class="badge bg-info bg-opacity-5 text-dark border border-dark border-opacity-10"
+                                                <span class="badge bg-info bg-opacity-10 text-dark border border-dark border-opacity-10"
                                                       t-esc="device.get('os', 'N/A')"/>
                                                 <t t-if="device.get('type')">
-                                                    <span class="badge bg-secondary bg-opacity-5 text-dark border border-dark border-opacity-10 ms-1"
+                                                    <span class="badge bg-secondary bg-opacity-10 text-dark border border-dark border-opacity-10 ms-1"
                                                           t-esc="device.get('type')"/>
                                                 </t>
                                             </span>
@@ -128,7 +128,12 @@
                                     </div>
                                 </div>
 
-
+                                <!-- FIX #9: CTA footer for clear affordance -->
+                                <div class="card-footer bg-transparent border-top text-center py-2">
+                                    <small class="text-primary">
+                                        <i class="fa fa-chart-line me-1"/>View details &amp; graphs
+                                    </small>
+                                </div>
                             </div>
                         </a>
                     </div>
