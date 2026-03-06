@@ -20,10 +20,10 @@ class ObserviumDashboardController(DashboardController):
     Extends DashboardController to inject Observium group info when the
     current dashboard is Observium-related AND the partner has a group code.
 
-    FIX #3: The Observium API is only called when the dashboard code is
+    The Observium API is only called when the dashboard code is
     in OBSERVIUM_DASHBOARD_CODES, avoiding spurious API calls for other dashboards.
 
-    FIX #15: Uses _get_extra_values() hook instead of duplicating dashboard_view().
+    Uses _get_extra_values() hook instead of duplicating dashboard_view().
     """
 
     def _get_observium_group_info(self):
@@ -91,7 +91,7 @@ class ObserviumDashboardController(DashboardController):
             'group_error':  None,
         }
 
-        # FIX #3: Only hit the Observium API for Observium dashboards
+        # Only hit the Observium API for Observium dashboards
         if code in OBSERVIUM_DASHBOARD_CODES:
             group_info, device_stats, group_error = self._get_observium_group_info()
             values.update({

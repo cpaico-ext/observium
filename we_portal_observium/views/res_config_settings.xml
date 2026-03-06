@@ -115,7 +115,7 @@
                                         </div>
                                         <p class="text-muted small mb-2">Connection parameters for the production Observium server.</p>
 
-                                        <div class="alert alert-warning py-1 px-2 small mb-2" invisible="observium_environment != 'prod'">
+                                        <div class="alert alert-warning py-1 px-2 small mb-2" role="alert" invisible="observium_environment != 'prod'">
                                             <i class="fa fa-exclamation-triangle me-1"/>Editing production environment
                                         </div>
 

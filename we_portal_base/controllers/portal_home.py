@@ -9,9 +9,6 @@ class PortalHomeController(CustomerPortal):
     def _get_accessible_dashboards(self):
         """
         Return all active dashboards accessible to the current portal user.
-
-        FIX #7: Uses a single ORM query with an SQL IN clause instead of
-        iterating roles and dashboards in Python (N+1 pattern).
         """
         partner = request.env.user.partner_id
 

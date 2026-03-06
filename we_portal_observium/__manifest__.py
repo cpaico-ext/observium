@@ -49,6 +49,7 @@
     'assets': {
         'web.assets_frontend': [
             'we_portal_observium/static/src/css/observium_portal.css',
+            'we_portal_observium/static/src/js/observium_device_detail.js',  # ← agregar
         ],
     },
     'installable': True,

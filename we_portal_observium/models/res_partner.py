@@ -10,7 +10,7 @@ class ResPartner(models.Model):
         inverse_name='client_id',
         string='Portal Roles',
     )
-
+    
     observium_group_code = fields.Char(
         string='Observium Group Code',
         help='Group code in Observium used to filter devices for this client.',

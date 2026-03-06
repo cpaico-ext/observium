@@ -5,7 +5,7 @@
         <t t-call="portal.portal_layout">
             <t t-set="o_portal_fullwidth_alert" t-value="False"/>
 
-            <!-- FIX #13: breadcrumb text uses translatable string -->
+            <!-- Breadcrumb -->
             <t t-set="additional_title" t-value="dashboard.name"/>
             <div id="portal_dashboard_breadcrumb" t-if="dashboard">
                 <nav aria-label="breadcrumb">
@@ -42,9 +42,11 @@
                         <t t-foreach="elements" t-as="element">
                             <div class="col-12">
                                 <t t-if="element.template_id">
+                                    <!-- Render the element's associated QWeb template -->
                                     <t t-call="{{element.template_id.xml_id}}"/>
                                 </t>
                                 <t t-else="">
+                                    <!-- Fallback: element without a template assigned -->
                                     <div class="card border-0 shadow-sm">
                                         <div class="card-body text-center py-5">
                                             <i class="fa fa-puzzle-piece fa-3x text-muted mb-3"/>

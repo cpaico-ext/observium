@@ -139,12 +139,14 @@
                                     </div>
                                 </div>
 
-                                <!-- FIX #9: CTA footer for clear affordance -->
-                                <div class="card-footer bg-transparent border-top text-center py-2">
-                                    <small class="text-primary">
-                                        <i class="fa fa-chart-line me-1"/>View details &amp; graphs
-                                    </small>
-                                </div>
+                                <!-- CTA footer for clear affordance -->
+                                <t t-if="is_admin">
+                                    <div class="card-footer bg-transparent border-top text-center py-2">
+                                        <small class="text-primary">
+                                            <i class="fa fa-chart-line me-1"/>View details &amp; graphs
+                                        </small>
+                                    </div>
+                                </t>
                             </div>
                         </a>
                     </div>

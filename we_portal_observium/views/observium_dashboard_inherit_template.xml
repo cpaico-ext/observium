@@ -10,7 +10,7 @@
               name="Portal: Dashboard Detail (Observium group info)"
               inherit_id="we_portal_base.portal_dashboard_detail">
 
-        <xpath expr="//div[contains(@class,'d-flex') and contains(@class,'align-items-center') and contains(@class,'mb-4') and contains(@class,'gap-3')]"
+        <xpath expr="//div[hasclass('d-flex') and hasclass('align-items-center') and hasclass('mb-4') and hasclass('gap-3')]"
                position="after">
 
             <!-- Resumen del grupo Observium -->
