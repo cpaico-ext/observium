@@ -246,14 +246,63 @@ class ObserviumPortalController(http.Controller):
         for s in sensors:
             sensor_groups.setdefault(s.get('sensor_type', 'other'), []).append(s)
 
-        graph_types = [
-            ('device_ucd_cpu', 'CPU',     'fa-microchip'),
-            ('device_mempool', 'Memory',  'fa-database'),
-            ('device_storage', 'Storage', 'fa-hdd-o'),
-            ('device_bits',    'Traffic', 'fa-exchange'),
-            ('device_ping',    'Ping',    'fa-heartbeat'),
-            ('device_uptime',  'Uptime',  'fa-clock-o'),
-        ]
+        # Full catalogue: graph_key (from API graphs{}) → (type_param, label, icon, group)
+        # group: 'performance' | 'sensors' | 'network' | 'system'
+        GRAPH_CATALOGUE = {
+            'processor':    ('device_processor',    'CPU',          'fa-microchip',       'performance'),
+            'mempool':      ('device_mempool',       'Memory',       'fa-database',        'performance'),
+            'storage':      ('device_storage',       'Storage',      'fa-hdd-o',           'performance'),
+            'bits':         ('device_bits',          'Traffic',      'fa-exchange',        'network'),
+            'ping':         ('device_ping',          'Ping',         'fa-heartbeat',       'network'),
+            'ping_snmp':    ('device_ping_snmp',     'Ping SNMP',    'fa-wifi',            'network'),
+            'uptime':       ('device_uptime',        'Uptime',       'fa-clock-o',         'system'),
+            'availability': ('device_availability',  'Availability', 'fa-check-circle',    'system'),
+            'temperature':  ('device_temperature',   'Temperature',  'fa-thermometer-half','sensors'),
+            'fanspeed':     ('device_fanspeed',      'Fan Speed',    'fa-refresh',         'sensors'),
+            'voltage':      ('device_voltage',       'Voltage',      'fa-bolt',            'sensors'),
+            'current':      ('device_current',       'Current',      'fa-plug',            'sensors'),
+            'power':        ('device_power',         'Power',        'fa-fire',            'sensors'),
+            'frequency':    ('device_frequency',     'Frequency',    'fa-signal',          'sensors'),
+            'dbm':          ('device_dbm',           'dBm',          'fa-rss',             'sensors'),
+            'wavelength':   ('device_wavelength',    'Wavelength',   'fa-tint',            'sensors'),
+            'dhcp_leases':  ('device_dhcp_leases',   'DHCP Leases',  'fa-list',            'system'),
+            'fdb_count':    ('device_fdb_count',     'FDB Count',    'fa-table',           'system'),
+        }
+
+        # Build dynamic graph list from what this device actually has enabled
+        device_graphs_raw = device.get('graphs', {}) if device else {}
+        enabled_keys = {
+            k for k, v in device_graphs_raw.items()
+            if isinstance(v, dict) and str(v.get('enabled', '0')) == '1'
+        }
+
+        # Order: performance → network → system → sensors
+        GROUP_ORDER = ['performance', 'network', 'system', 'sensors']
+        graph_types = []
+        for group in GROUP_ORDER:
+            for key, (type_param, label, icon, grp) in GRAPH_CATALOGUE.items():
+                if grp == group and key in enabled_keys:
+                    graph_types.append((type_param, label, icon, group))
+
+        # Fallback: if device has no graphs{} data, use minimal hardcoded set
+        if not graph_types:
+            graph_types = [
+                ('device_processor',  'CPU',     'fa-microchip', 'performance'),
+                ('device_mempool',    'Memory',  'fa-database',  'performance'),
+                ('device_bits',       'Traffic', 'fa-exchange',  'network'),
+                ('device_ping',       'Ping',    'fa-heartbeat', 'network'),
+                ('device_uptime',     'Uptime',  'fa-clock-o',   'system'),
+            ]
+
+        # Header mini-graphs: always these 4 if available, else first 4 from graph_types
+        HEADER_PREFERENCE = ['uptime', 'mempool', 'processor', 'bits']
+        header_graphs = []
+        for key in HEADER_PREFERENCE:
+            if key in enabled_keys and key in GRAPH_CATALOGUE:
+                tp, lbl, ico, grp = GRAPH_CATALOGUE[key]
+                header_graphs.append((tp, lbl, ico))
+        if not header_graphs:
+            header_graphs = [(t, l, i) for t, l, i, _ in graph_types[:4]]
 
         # FIX #10 — Format uptime as human-readable string
         uptime_str = self._format_uptime(device.get('uptime') if device else None)
@@ -279,6 +328,7 @@ class ObserviumPortalController(http.Controller):
             'mem_used_gb':   mem_used_gb,
             'mem_total_gb':  mem_total_gb,
             'graph_types':   graph_types,
+            'header_graphs': header_graphs,
             'device_id':     device_id,
             'uptime_str':    uptime_str,
             'error':         error,
@@ -317,8 +367,13 @@ class ObserviumPortalController(http.Controller):
                 type='http', auth='user', website=True)
     def device_graph(self, device_id, graph_type, period='-1d', **kw):
         allowed_types = {
-            'device_ucd_cpu', 'device_mempool', 'device_bits', 'device_ping',
-            'device_uptime', 'device_storage', 'device_netstats_bits',
+            'device_processor', 'device_mempool', 'device_bits', 'device_ping',
+            'device_ping_snmp', 'device_uptime', 'device_availability',
+            'device_storage', 'device_netstats_bits',
+            'device_temperature', 'device_fanspeed', 'device_voltage',
+            'device_current', 'device_power', 'device_frequency',
+            'device_dbm', 'device_wavelength',
+            'device_dhcp_leases', 'device_fdb_count', 'device_status',
         }
         if graph_type not in allowed_types:
             raise NotFound()

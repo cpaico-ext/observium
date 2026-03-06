@@ -1,16 +1,156 @@
 /* we_portal_observium — Observium portal styles */
 
-/* Icon wrappers */
+/* ── Icon wrappers ──────────────────────────────────────────────── */
 .obs-icon-wrap {
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
+    width: 52px; height: 52px; border-radius: 50%;
     background: rgba(var(--bs-primary-rgb), 0.08);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ── DEVICE BANNER (Observium-style dark header) ────────────────── */
+.obs-device-banner {
+    background: linear-gradient(135deg, #1a1f2e 0%, #2d3450 100%);
+    border-radius: .75rem .75rem 0 0;
+    padding: 1rem 1.25rem;
     display: flex;
     align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
 }
+.obs-banner-identity {
+    display: flex; align-items: flex-start; gap: .85rem; flex: 1; min-width: 0;
+}
+.obs-banner-icon {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,.1);
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.obs-banner-sub {
+    font-size: .82rem; color: rgba(255,255,255,.65);
+    display: flex; flex-wrap: wrap; align-items: center; gap: .1rem;
+}
+/* 4 mini header graphs */
+.obs-banner-graphs {
+    display: flex; gap: .75rem; flex-shrink: 0; flex-wrap: wrap;
+    justify-content: flex-end;
+}
+.obs-mini-graph-wrap {
+    text-align: center;
+}
+.obs-mini-graph-label {
+    font-size: .7rem; color: rgba(255,255,255,.6);
+    text-transform: uppercase; letter-spacing: .04em; margin-bottom: .25rem;
+}
+.obs-mini-graph-img-wrap {
+    width: 140px; height: 44px;
+    background: rgba(0,0,0,.25); border-radius: .35rem;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.obs-mini-spinner { color: rgba(255,255,255,.4); }
+.obs-mini-graph-img { width: 140px; height: 44px; object-fit: cover; }
+
+/* ── Navigation tabs (flush with banner) ────────────────────────── */
+.obs-device-tabs {
+    background: #f0f2f7;
+    border-bottom: 2px solid #dee2e6;
+    padding: 0 .5rem;
+    flex-wrap: nowrap; overflow-x: auto;
+}
+.obs-device-tabs .nav-link {
+    border: none; border-bottom: 3px solid transparent;
+    border-radius: 0; padding: .6rem .85rem;
+    font-size: .85rem; color: #495057; white-space: nowrap;
+}
+.obs-device-tabs .nav-link:hover { border-bottom-color: #adb5bd; color: #212529; }
+.obs-device-tabs .nav-link.active { border-bottom-color: var(--bs-primary); color: var(--bs-primary); font-weight: 600; background: transparent; }
+
+/* ── Tab body ───────────────────────────────────────────────────── */
+.obs-tab-body { padding: 1rem 0 2rem; }
+
+/* ── Info cards ─────────────────────────────────────────────────── */
+.obs-info-card { border: 1px solid #e2e6ea; border-radius: .5rem; box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+.obs-card-header {
+    display: flex; align-items: center;
+    padding: .5rem .85rem; background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-size: .85rem; font-weight: 600; border-radius: .5rem .5rem 0 0;
+}
+.obs-info-table td { padding: .3rem .75rem; vertical-align: middle; }
+.obs-info-label { color: #6c757d; width: 40%; font-size: .82rem; font-weight: 500; }
+
+/* ── Inline graph (small, inside card) ──────────────────────────── */
+.obs-graph-body-sm {
+    min-height: 60px; display: flex; align-items: center; justify-content: center;
+}
+.obs-graph-body-sm .obs-graph-img { width: 100%; height: auto; border-radius: .25rem; }
+
+/* ── Progress bars ──────────────────────────────────────────────── */
+.obs-progress { height: 6px; border-radius: 3px; }
+
+/* ── Status rows (Status Indicators + Sensor groups) ────────────── */
+.obs-status-row {
+    display: flex; align-items: center; gap: .6rem;
+    padding: .35rem .85rem; border-bottom: 1px solid #f0f0f0;
+}
+.obs-status-row:last-child { border-bottom: none; }
+.obs-status-name { flex: 1; font-size: .83rem; min-width: 0; }
+.obs-status-bar { flex: 2; height: 4px; background: #e9ecef; border-radius: 2px; overflow: hidden; }
+.obs-status-line { height: 100%; width: 100%; }
+
+/* ── Port chips (port list below traffic graph) ──────────────────── */
+.obs-port-list { display: flex; flex-wrap: wrap; gap: .3rem; }
+.obs-port-chip {
+    font-size: .7rem; padding: .1rem .4rem; border-radius: .25rem;
+    font-family: monospace; border: 1px solid;
+}
+.obs-port-up   { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+.obs-port-down { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+
+/* ── Graph section (Graphs tab) ─────────────────────────────────── */
+.obs-graph-group-title {
+    font-size: .8rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .06em; color: #6c757d;
+    margin-bottom: .6rem; padding-left: .25rem;
+}
+.obs-graph-card { border: 1px solid #e9ecef; border-radius: .75rem; overflow: hidden; }
+.obs-graph-header {
+    padding: .5rem 1rem; background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef; font-size: .88rem; font-weight: 600;
+}
+.obs-graph-body {
+    padding: .65rem; background: #fff; min-height: 60px;
+    display: flex; align-items: center; justify-content: center;
+}
+.obs-graph-img { width: 100%; height: auto; border-radius: .25rem; }
+.obs-graph-spinner { display: flex; align-items: center; justify-content: center; padding: 1rem 0; width: 100%; }
+
+/* ── Summary bar (device list) ──────────────────────────────────── */
+.obs-summary-bar {
+    display: flex; flex-wrap: wrap; gap: 1rem 1.5rem;
+    padding: 1rem 1.25rem; background: #f8f9fa;
+    border-radius: .75rem; border: 1px solid #e9ecef;
+}
+.obs-stat { display: flex; align-items: center; gap: .5rem; }
+.obs-stat-value { font-size: 1.25rem; font-weight: 700; line-height: 1; }
+.obs-stat-label { font-size: .8rem; color: #6c757d; }
+
+/* ── Device cards (device list) ─────────────────────────────────── */
+.obs-device-card {
+    border-radius: .75rem; overflow: hidden; position: relative;
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.obs-device-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,.1) !important; }
+.obs-status-stripe { height: 4px; width: 100%; }
+.obs-device-info { display: flex; flex-direction: column; gap: .35rem; margin-top: .5rem; }
+.obs-info-row { display: flex; align-items: center; gap: .4rem; }
+
+/* ── Dashboard element ──────────────────────────────────────────── */
+.obs-dashboard-element {
+    padding: 1rem; background: #f8f9fa;
+    border-radius: .75rem; border: 1px solid #e9ecef;
+}
+
 
 .obs-icon-wrap-lg {
     width: 72px;

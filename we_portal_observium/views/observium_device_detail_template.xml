@@ -1,719 +1,806 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="observium_device_detail_template" name="Observium: Device Detail">
-        <t t-call="portal.portal_layout">
+<template id="observium_device_detail_template" name="Observium: Device Detail">
+    <t t-call="portal.portal_layout">
 
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb" class="mb-3">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/my/home">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/my/observium">Network Devices</a></li>
-                    <li class="breadcrumb-item active"
-                        t-esc="device.get('sysName') or device.get('hostname', device_id) if device else device_id"/>
-                </ol>
-            </nav>
+        <!-- ══════════════════════════════════════════════════════════════
+             BREADCRUMB
+        ═══════════════════════════════════════════════════════════════ -->
+        <nav aria-label="breadcrumb" class="mb-0">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/my/home">Home</a></li>
+                <li class="breadcrumb-item"><a href="/my/observium">Network Devices</a></li>
+                <li class="breadcrumb-item active"
+                    t-esc="device.get('sysName') or device.get('hostname', device_id) if device else device_id"/>
+            </ol>
+        </nav>
 
-            <!-- Error state: device failed to load -->
-            <t t-if="error and not device">
-                <div class="alert alert-danger d-flex gap-3 align-items-start">
-                    <i class="fa fa-exclamation-triangle fa-2x mt-1 flex-shrink-0"/>
+        <!-- Error / empty states -->
+        <t t-if="error and not device">
+            <div class="alert alert-danger d-flex gap-3 align-items-start mt-3">
+                <i class="fa fa-exclamation-triangle fa-2x mt-1 flex-shrink-0"/>
+                <div><strong>Error loading device</strong>
+                    <p class="mb-0 small" t-esc="error"/>
+                </div>
+            </div>
+        </t>
+        <t t-if="not device and not error">
+            <div class="card border-0 shadow-sm mt-3">
+                <div class="card-body text-center py-5">
+                    <i class="fa fa-question-circle fa-3x text-muted mb-3"/>
+                    <h4 class="text-muted">Device not found</h4>
+                    <p class="text-muted small">The device may have been removed from Observium.</p>
+                    <a href="/my/observium" class="btn btn-outline-primary btn-sm mt-2">
+                        <i class="fa fa-arrow-left me-1"/>Back to devices
+                    </a>
+                </div>
+            </div>
+        </t>
+        <t t-if="warnings">
+            <div class="alert alert-warning d-flex gap-2 align-items-start mt-2">
+                <i class="fa fa-exclamation-circle mt-1 flex-shrink-0"/>
+                <div><strong>Some sections could not be loaded</strong>
+                    <ul class="mb-0 mt-1 small">
+                        <t t-foreach="warnings.items()" t-as="w">
+                            <li><span class="text-capitalize" t-esc="w[0]"/>: <span class="text-muted" t-esc="w[1]"/></li>
+                        </t>
+                    </ul>
+                </div>
+            </div>
+        </t>
+
+        <t t-if="device">
+            <t t-set="is_up" t-value="str(device.get('status')) == '1'"/>
+
+            <!-- ══════════════════════════════════════════════════════════
+                 DEVICE BANNER  (Observium-style top bar)
+            ═══════════════════════════════════════════════════════════ -->
+            <div class="obs-device-banner mt-2">
+                <div class="obs-banner-identity">
+                    <div class="obs-banner-icon">
+                        <i class="fa fa-2x fa-server text-white"/>
+                    </div>
                     <div>
-                        <strong>Error loading device</strong>
-                        <p class="mb-0 small" t-esc="error"/>
-                    </div>
-                </div>
-            </t>
-
-            <!-- FIX #14: explicit empty state when device is None with no error -->
-            <t t-if="not device and not error">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="fa fa-question-circle fa-3x text-muted mb-3"/>
-                        <h4 class="text-muted">Device not found</h4>
-                        <p class="text-muted small">
-                            The requested device could not be found.
-                            It may have been removed from Observium.
-                        </p>
-                        <a href="/my/observium" class="btn btn-outline-primary btn-sm mt-2">
-                            <i class="fa fa-arrow-left me-1"/>Back to devices
-                        </a>
-                    </div>
-                </div>
-            </t>
-
-            <!-- Partial warnings: sections that failed to load -->
-            <t t-if="warnings">
-                <div class="alert alert-warning d-flex gap-3 align-items-start">
-                    <i class="fa fa-exclamation-circle fa-lg mt-1 flex-shrink-0"/>
-                    <div>
-                        <strong>Some sections could not be loaded</strong>
-                        <ul class="mb-0 mt-1 small">
-                            <t t-foreach="warnings.items()" t-as="w">
-                                <li>
-                                    <span class="text-capitalize" t-esc="w[0]"/>:
-                                    <span class="text-muted" t-esc="w[1]"/>
-                                </li>
-                            </t>
-                        </ul>
-                    </div>
-                </div>
-            </t>
-
-            <t t-if="device">
-                <t t-set="is_up" t-value="str(device.get('status')) == '1'"/>
-
-                <!-- Header -->
-                <div class="d-flex align-items-center gap-3 mb-4">
-                    <div class="obs-icon-wrap-lg">
-                        <i class="fa fa-3x fa-server text-primary"/>
-                    </div>
-                    <div class="flex-grow-1">
                         <div class="d-flex align-items-center gap-2 flex-wrap">
-                            <h2 class="mb-0" t-esc="device.get('sysName') or device.get('hostname', 'Unknown')"/>
-                            <span t-attf-class="badge {{ 'bg-success' if is_up else 'bg-danger' }} fs-6">
+                            <h4 class="mb-0 text-white fw-bold"
+                                t-esc="device.get('sysName') or device.get('hostname', 'Unknown')"/>
+                            <span t-attf-class="badge {{ 'bg-success' if is_up else 'bg-danger' }}">
                                 <i t-attf-class="fa {{ 'fa-check' if is_up else 'fa-times' }} me-1"/>
                                 <t t-esc="'Up' if is_up else 'Down'"/>
                             </span>
                             <t t-if="alerts_failed">
-                                <a href="#tab-alerts" class="badge bg-danger text-decoration-none obs-tab-link"
-                                   data-bs-toggle="tab" data-bs-target="#tab-alerts">
+                                <span class="badge bg-warning text-dark obs-alert-badge" data-tab="tab-alerts"
+                                      style="cursor:pointer">
                                     <i class="fa fa-bell me-1"/>
-                                    <t t-esc="len(alerts_failed or [])"/> alert(s)
-                                </a>
-                            </t>
-                        </div>
-                        <p class="text-muted mb-0" t-esc="device.get('hostname', '')"/>
-                    </div>
-                    <a href="/my/observium" class="btn btn-outline-secondary btn-sm">
-                        <i class="fa fa-arrow-left me-1"/>Back
-                    </a>
-                </div>
-
-                <!-- KPI bar -->
-                <div class="obs-summary-bar mb-4">
-                    <div class="obs-stat">
-                        <i class="fa fa-microchip text-primary"/>
-                        <div>
-                            <span t-attf-class="obs-stat-value {{ 'text-danger' if cpu_avg > 85 else 'text-warning' if cpu_avg > 60 else '' }}">
-                                <t t-esc="str(cpu_avg) + '%'"/>
-                            </span>
-                            <span class="obs-stat-label d-block">CPU</span>
-                        </div>
-                    </div>
-                    <div class="obs-stat">
-                        <i class="fa fa-database text-primary"/>
-                        <div>
-                            <span t-attf-class="obs-stat-value {{ 'text-danger' if mem_perc > 85 else 'text-warning' if mem_perc > 60 else '' }}">
-                                <t t-esc="str(mem_perc) + '%'"/>
-                            </span>
-                            <span class="obs-stat-label d-block">RAM</span>
-                        </div>
-                    </div>
-                    <t t-if="ports">
-                        <div class="obs-stat">
-                            <i class="fa fa-ethernet text-primary"/>
-                            <div>
-                                <span class="obs-stat-value">
-                                    <span class="text-success" t-esc="len(ports_up or [])"/>
-                                    <span class="text-muted fw-normal">/</span>
-                                    <span class="text-danger" t-esc="len(ports_down or [])"/>
+                                    <t t-esc="len(alerts_failed)"/> alert(s)
                                 </span>
-                                <span class="obs-stat-label d-block">Ports up/down</span>
-                            </div>
+                            </t>
                         </div>
-                    </t>
-                    <div class="obs-stat">
-                        <i t-attf-class="fa fa-bell {{ 'text-danger' if alerts_failed else 'text-muted' }}"/>
-                        <div>
-                            <span t-attf-class="obs-stat-value {{ 'text-danger' if alerts_failed else '' }}">
-                                <t t-esc="len(alerts_failed or [])"/>
-                            </span>
-                            <span class="obs-stat-label d-block">Active alerts</span>
+                        <div class="obs-banner-sub mt-1">
+                            <span><i class="fa fa-globe me-1 opacity-75"/><t t-esc="device.get('hostname', '')"/></span>
+                            <t t-if="device.get('vendor') or device.get('hardware')">
+                                <span class="mx-2 opacity-50">·</span>
+                                <span><t t-esc="' '.join(filter(None,[device.get('vendor',''), device.get('hardware','')]))"/></span>
+                            </t>
+                            <t t-if="device.get('os_text') or device.get('os')">
+                                <span class="mx-2 opacity-50">·</span>
+                                <span><t t-esc="device.get('os_text') or device.get('os','')"/>
+                                    <t t-if="device.get('version')"> <t t-esc="device.get('version','')"/></t>
+                                </span>
+                            </t>
                         </div>
                     </div>
-                    <!-- FIX #10: Show human-readable uptime instead of raw seconds -->
-                    <t t-if="uptime_str and uptime_str != 'N/A'">
-                        <div class="obs-stat">
-                            <i class="fa fa-clock-o text-primary"/>
-                            <div>
-                                <span class="obs-stat-value small" t-esc="uptime_str"/>
-                                <span class="obs-stat-label d-block">Uptime</span>
+                </div>
+                <!-- 4 mini header graphs -->
+                <div class="obs-banner-graphs">
+                    <t t-foreach="header_graphs" t-as="hg">
+                        <div class="obs-mini-graph-wrap">
+                            <div class="obs-mini-graph-label">
+                                <i t-attf-class="fa {{ hg[2] }} me-1"/>
+                                <t t-esc="hg[1]"/>
+                            </div>
+                            <div class="obs-mini-graph-img-wrap">
+                                <div class="obs-mini-spinner">
+                                    <span class="spinner-border spinner-border-sm" role="status"/>
+                                </div>
+                                <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/{{ hg[0] }}?period=-1d"
+                                     class="obs-mini-graph-img d-none"
+                                     t-attf-data-graph="{{ hg[0] }}"
+                                     t-attf-data-device="{{ device.get('device_id') }}"
+                                     onload="this.classList.remove('d-none'); this.previousElementSibling &amp;&amp; this.previousElementSibling.remove();"
+                                     onerror="this.parentElement.innerHTML=''"
+                                     alt=""/>
                             </div>
                         </div>
                     </t>
                 </div>
+            </div>
 
-                <!-- Tabs -->
-                <ul class="nav nav-tabs mb-3" id="obsDeviceTabs" role="tablist">
-                    <li class="nav-item">
-                        <button class="nav-link active" data-bs-toggle="tab"
-                                data-bs-target="#tab-overview" type="button">
-                            <i class="fa fa-info-circle me-1"/>Overview
-                        </button>
-                    </li>
-                    <li class="nav-item" t-if="ports">
-                        <button class="nav-link" data-bs-toggle="tab"
-                                data-bs-target="#tab-ports" type="button">
-                            <i class="fa fa-ethernet me-1"/>
-                            Interfaces
-                            <span class="badge bg-secondary ms-1" t-esc="len(ports)"/>
-                        </button>
-                    </li>
-                    <li class="nav-item" t-if="sensors">
-                        <button class="nav-link" data-bs-toggle="tab"
-                                data-bs-target="#tab-sensors" type="button">
-                            <i class="fa fa-thermometer-half me-1"/>
-                            Sensors
-                            <span class="badge bg-secondary ms-1" t-esc="len(sensors)"/>
-                        </button>
-                    </li>
-                    <li class="nav-item" t-if="alerts">
-                        <button class="nav-link" id="tab-alerts-btn" data-bs-toggle="tab"
-                                data-bs-target="#tab-alerts" type="button">
-                            <i class="fa fa-bell me-1"/>
-                            Alerts
-                            <t t-if="alerts_failed">
-                                <span class="badge bg-danger ms-1" t-esc="len(alerts_failed)"/>
-                            </t>
-                            <t t-else="">
-                                <span class="badge bg-secondary ms-1">0</span>
-                            </t>
-                        </button>
-                    </li>
-                    <li class="nav-item" t-if="neighbours">
-                        <button class="nav-link" data-bs-toggle="tab"
-                                data-bs-target="#tab-neighbours" type="button">
-                            <i class="fa fa-sitemap me-1"/>
-                            Neighbours
-                            <span class="badge bg-secondary ms-1" t-esc="len(neighbours)"/>
-                        </button>
-                    </li>
-                    <li class="nav-item">
-                        <button class="nav-link" data-bs-toggle="tab"
-                                data-bs-target="#tab-graphs" type="button">
-                            <i class="fa fa-area-chart me-1"/>Graphs
-                        </button>
-                    </li>
-                </ul>
+            <!-- ══════════════════════════════════════════════════════════
+                 NAVIGATION TABS
+            ═══════════════════════════════════════════════════════════ -->
+            <ul class="nav obs-device-tabs" id="obsDeviceTabs" role="tablist">
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-overview" type="button">
+                        <i class="fa fa-th-large me-1"/>Overview
+                    </button>
+                </li>
+                <li class="nav-item" t-if="graph_types">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-graphs" type="button">
+                        <i class="fa fa-area-chart me-1"/>Graphs
+                    </button>
+                </li>
+                <li class="nav-item" t-if="sensors or statuses">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-health" type="button">
+                        <i class="fa fa-heartbeat me-1"/>Health
+                    </button>
+                </li>
+                <li class="nav-item" t-if="ports">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-ports" type="button">
+                        <i class="fa fa-ethernet me-1"/>Ports
+                        <span class="badge bg-secondary ms-1" t-esc="len(ports)"/>
+                    </button>
+                </li>
+                <li class="nav-item" t-if="addresses">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-inventory" type="button">
+                        <i class="fa fa-list me-1"/>Inventory
+                    </button>
+                </li>
+                <li class="nav-item" t-if="alerts">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-alerts" type="button" id="alerts-tab-btn">
+                        <i class="fa fa-bell me-1"/>Alerts
+                        <t t-if="alerts_failed">
+                            <span class="badge bg-danger ms-1" t-esc="len(alerts_failed)"/>
+                        </t>
+                    </button>
+                </li>
+                <li class="nav-item" t-if="neighbours">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-neighbours" type="button">
+                        <i class="fa fa-sitemap me-1"/>Neighbours
+                        <span class="badge bg-secondary ms-1" t-esc="len(neighbours)"/>
+                    </button>
+                </li>
+            </ul>
 
-                <div class="tab-content">
+            <!-- ══════════════════════════════════════════════════════════
+                 TAB CONTENT
+            ═══════════════════════════════════════════════════════════ -->
+            <div class="tab-content obs-tab-body">
 
-                    <!-- TAB 1: OVERVIEW -->
-                    <div class="tab-pane fade show active" id="tab-overview">
+                <!-- ────── TAB: OVERVIEW ────────────────────────────── -->
+                <div class="tab-pane fade show active" id="tab-overview">
+                    <div class="row g-3">
 
-                        <t t-if="device.get('sysDescr')">
-                            <div class="card border-1 shadow-sm mb-4">
-                                <div class="card-header bg-transparent fw-bold">
-                                    <i class="fa fa-file-text-o text-primary me-2"/>System Description
+                        <!-- LEFT: device info + ports traffic -->
+                        <div class="col-lg-5">
+
+                            <div class="card obs-info-card mb-3">
+                                <div class="card-header obs-card-header">
+                                    <i class="fa fa-info-circle text-primary me-2"/>
+                                    <t t-esc="device.get('hardware') or 'Device Information'"/>
                                 </div>
-                                <div class="card-body">
-                                    <pre class="obs-sysdescr"><t t-esc="device.get('sysDescr')"/></pre>
+                                <div class="card-body p-0">
+                                    <table class="table table-sm table-borderless obs-info-table mb-0">
+                                        <tbody>
+                                            <tr>
+                                                <td class="obs-info-label">Vendor / Hardware</td>
+                                                <td class="small"><t t-esc="' '.join(filter(None,[device.get('vendor',''), device.get('hardware','')])) or 'N/A'"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="obs-info-label">Operating system</td>
+                                                <td class="small">
+                                                    <t t-esc="device.get('os_text') or device.get('os','N/A')"/>
+                                                    <t t-if="device.get('version')"><span class="text-muted ms-1" t-esc="device.get('version')"/></t>
+                                                    <t t-if="device.get('features')"><span class="text-muted ms-1">(<t t-esc="device.get('features')"/>)</span></t>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="obs-info-label">System name</td>
+                                                <td><code class="small" t-esc="device.get('sysName','N/A')"/></td>
+                                            </tr>
+                                            <t t-if="device.get('asset_tag')">
+                                                <tr><td class="obs-info-label">Asset tag</td><td class="small" t-esc="device.get('asset_tag')"/></tr>
+                                            </t>
+                                            <t t-if="device.get('serial')">
+                                                <tr><td class="obs-info-label">Serial</td><td class="small" t-esc="device.get('serial')"/></tr>
+                                            </t>
+                                            <tr>
+                                                <td class="obs-info-label">Cached IP</td>
+                                                <td><code class="small" t-esc="device.get('ip','N/A')"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="obs-info-label">Uptime</td>
+                                                <td class="small fw-bold" t-esc="uptime_str"/>
+                                            </tr>
+                                            <tr>
+                                                <td class="obs-info-label">Last polled</td>
+                                                <td class="small text-muted" t-esc="device.get('last_polled','N/A')"/>
+                                            </tr>
+                                            <t t-if="device.get('sysContact')">
+                                                <tr><td class="obs-info-label">Contact</td><td class="small" t-esc="device.get('sysContact')"/></tr>
+                                            </t>
+                                            <tr>
+                                                <td class="obs-info-label">SNMP</td>
+                                                <td class="small text-muted">
+                                                    v<t t-esc="device.get('snmp_version','N/A')"/> / port <t t-esc="device.get('snmp_port','161')"/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
-                        </t>
 
-                        <div class="row g-3 mb-4">
-                            <!-- Device info -->
-                            <div class="col-md-6">
-                                <div class="card border-1 shadow-sm h-100">
-                                    <div class="card-header bg-transparent fw-bold">
-                                        <i class="fa fa-info-circle text-primary me-2"/>Device Information
+                            <!-- Ports traffic graph card -->
+                            <t t-if="ports">
+                                <div class="card obs-info-card mb-3">
+                                    <div class="card-header obs-card-header">
+                                        <i class="fa fa-exchange text-primary me-2"/>Ports
+                                        <div class="ms-auto d-flex gap-2 small">
+                                            <span class="text-muted"><i class="fa fa-ethernet me-1"/><t t-esc="len(ports)"/></span>
+                                            <span class="text-success"><i class="fa fa-check me-1"/><t t-esc="len(ports_up)"/></span>
+                                            <span class="text-danger"><i class="fa fa-times me-1"/><t t-esc="len(ports_down)"/></span>
+                                        </div>
                                     </div>
-                                    <div class="card-body">
-                                        <table class="table table-sm table-borderless mb-0">
+                                    <div class="card-body p-2">
+                                        <div class="obs-graph-body-sm">
+                                            <div class="obs-graph-spinner small"><span class="spinner-border spinner-border-sm me-2"/>Loading...</div>
+                                            <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/device_bits?period=-1d"
+                                                 class="obs-graph-img d-none img-fluid"
+                                                 onload="this.classList.remove('d-none'); this.previousElementSibling &amp;&amp; this.previousElementSibling.classList.contains('obs-graph-spinner') &amp;&amp; this.previousElementSibling.remove();"
+                                                 onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;Not available&lt;/span&gt;'"
+                                                 alt="Traffic"/>
+                                        </div>
+                                        <div class="obs-port-list mt-2">
+                                            <t t-foreach="ports[:14]" t-as="p">
+                                                <t t-set="p_up2" t-value="p.get('ifOperStatus') == 'up'"/>
+                                                <span t-attf-class="obs-port-chip {{ 'obs-port-up' if p_up2 else 'obs-port-down' }}"
+                                                      t-esc="p.get('ifDescr') or p.get('port_label','?')"/>
+                                            </t>
+                                            <t t-if="len(ports) > 14">
+                                                <span class="obs-port-chip text-muted">+<t t-esc="len(ports)-14"/> more</span>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- RIGHT: processors, memory, storage, status, sensors -->
+                        <div class="col-lg-7">
+
+                            <t t-if="processors">
+                                <div class="card obs-info-card mb-3">
+                                    <div class="card-header obs-card-header">
+                                        <i class="fa fa-microchip text-primary me-2"/>Processors
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <div class="obs-graph-body-sm">
+                                            <div class="obs-graph-spinner small"><span class="spinner-border spinner-border-sm me-2"/>Loading...</div>
+                                            <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/device_processor?period=-1d"
+                                                 class="obs-graph-img d-none img-fluid"
+                                                 onload="this.classList.remove('d-none'); this.previousElementSibling &amp;&amp; this.previousElementSibling.classList.contains('obs-graph-spinner') &amp;&amp; this.previousElementSibling.remove();"
+                                                 onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;Not available&lt;/span&gt;'"
+                                                 alt="CPU"/>
+                                        </div>
+                                        <t t-foreach="processors" t-as="proc">
+                                            <t t-set="pu" t-value="int(proc.get('processor_usage', 0) or 0)"/>
+                                            <div class="d-flex align-items-center gap-2 mt-2">
+                                                <small class="text-muted flex-shrink-0" style="min-width:110px" t-esc="proc.get('processor_descr','CPU')"/>
+                                                <div class="progress flex-grow-1 obs-progress">
+                                                    <div t-attf-class="progress-bar {{ 'bg-danger' if pu>85 else 'bg-warning' if pu>60 else 'bg-success' }}" t-attf-style="width:{{ pu }}%"/>
+                                                </div>
+                                                <small t-attf-class="fw-bold flex-shrink-0 {{ 'text-danger' if pu>85 else 'text-warning' if pu>60 else 'text-success' }}" t-esc="str(pu)+'%'"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <t t-if="mempools">
+                                <div class="card obs-info-card mb-3">
+                                    <div class="card-header obs-card-header">
+                                        <i class="fa fa-database text-primary me-2"/>Memory
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <div class="obs-graph-body-sm">
+                                            <div class="obs-graph-spinner small"><span class="spinner-border spinner-border-sm me-2"/>Loading...</div>
+                                            <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/device_mempool?period=-1d"
+                                                 class="obs-graph-img d-none img-fluid"
+                                                 onload="this.classList.remove('d-none'); this.previousElementSibling &amp;&amp; this.previousElementSibling.classList.contains('obs-graph-spinner') &amp;&amp; this.previousElementSibling.remove();"
+                                                 onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;Not available&lt;/span&gt;'"
+                                                 alt="Memory"/>
+                                        </div>
+                                        <t t-foreach="mempools" t-as="mem">
+                                            <t t-set="mp" t-value="int(mem.get('mempool_perc',0) or 0)"/>
+                                            <t t-set="mu" t-value="round(int(mem.get('mempool_used',0) or 0)/(1024**3),1)"/>
+                                            <t t-set="mt_" t-value="round(int(mem.get('mempool_total',0) or 0)/(1024**3),1)"/>
+                                            <div class="d-flex align-items-center gap-2 mt-2">
+                                                <small class="text-muted flex-shrink-0" style="min-width:110px" t-esc="mem.get('mempool_descr','Memory')"/>
+                                                <div class="progress flex-grow-1 obs-progress">
+                                                    <div t-attf-class="progress-bar {{ 'bg-danger' if mp>85 else 'bg-warning' if mp>60 else 'bg-success' }}" t-attf-style="width:{{ mp }}%"/>
+                                                </div>
+                                                <small t-attf-class="fw-bold flex-shrink-0 {{ 'text-danger' if mp>85 else '' }}">
+                                                    <t t-esc="str(mu)"/>/<t t-esc="str(mt_)"/>GB (<t t-esc="str(mp)"/>%)
+                                                </small>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <t t-if="storages">
+                                <div class="card obs-info-card mb-3">
+                                    <div class="card-header obs-card-header">
+                                        <i class="fa fa-hdd-o text-primary me-2"/>Storage
+                                    </div>
+                                    <div class="card-body p-2">
+                                        <div class="obs-graph-body-sm">
+                                            <div class="obs-graph-spinner small"><span class="spinner-border spinner-border-sm me-2"/>Loading...</div>
+                                            <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/device_storage?period=-1d"
+                                                 class="obs-graph-img d-none img-fluid"
+                                                 onload="this.classList.remove('d-none'); this.previousElementSibling &amp;&amp; this.previousElementSibling.classList.contains('obs-graph-spinner') &amp;&amp; this.previousElementSibling.remove();"
+                                                 onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;Not available&lt;/span&gt;'"
+                                                 alt="Storage"/>
+                                        </div>
+                                        <t t-foreach="storages" t-as="stor">
+                                            <t t-set="sp" t-value="int(stor.get('storage_perc',0) or 0)"/>
+                                            <t t-set="su" t-value="round(int(stor.get('storage_used',0) or 0)/(1024**3),1)"/>
+                                            <t t-set="st_" t-value="round(int(stor.get('storage_size',0) or 0)/(1024**3),1)"/>
+                                            <div class="d-flex align-items-center gap-2 mt-2">
+                                                <small class="text-muted flex-shrink-0" style="min-width:110px" t-esc="stor.get('storage_descr','Disk')"/>
+                                                <div class="progress flex-grow-1 obs-progress">
+                                                    <div t-attf-class="progress-bar {{ 'bg-danger' if sp>85 else 'bg-warning' if sp>60 else 'bg-info' }}" t-attf-style="width:{{ sp }}%"/>
+                                                </div>
+                                                <small t-attf-class="fw-bold flex-shrink-0 {{ 'text-danger' if sp>85 else '' }}">
+                                                    <t t-esc="str(su)"/>/<t t-esc="str(st_)"/>GB (<t t-esc="str(sp)"/>%)
+                                                </small>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- Status Indicators -->
+                            <t t-if="statuses">
+                                <div class="card obs-info-card mb-3">
+                                    <div class="card-header obs-card-header">
+                                        <i class="fa fa-traffic-light text-primary me-2"/>Status Indicators
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <t t-foreach="statuses" t-as="st">
+                                            <t t-set="st_ev" t-value="st.get('status_event', st.get('event',''))"/>
+                                            <div class="obs-status-row">
+                                                <span class="obs-status-name" t-esc="st.get('status_descr') or st.get('status_name','')"/>
+                                                <div class="obs-status-bar">
+                                                    <div t-attf-class="obs-status-line {{ 'bg-danger' if st_ev=='alert' else 'bg-success' if st_ev=='ok' else 'bg-secondary' }}"/>
+                                                </div>
+                                                <span t-attf-class="badge {{ 'bg-danger' if st_ev=='alert' else 'bg-success' if st_ev=='ok' else 'bg-secondary' }}"
+                                                      t-esc="str(st.get('status_value', st_ev or 'N/A'))"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
+                            <!-- Sensor groups: temperature, fanspeed, voltage, etc. -->
+                            <t t-foreach="sensor_groups.items()" t-as="sg">
+                                <t t-set="sg_type" t-value="sg[0]"/>
+                                <div class="card obs-info-card mb-3">
+                                    <div class="card-header obs-card-header">
+                                        <t t-if="sg_type == 'temperature'"><i class="fa fa-thermometer-half text-danger me-2"/>Temperature</t>
+                                        <t t-elif="sg_type == 'fanspeed'"><i class="fa fa-refresh text-info me-2"/>Fanspeed</t>
+                                        <t t-elif="sg_type == 'current'"><i class="fa fa-plug text-warning me-2"/>Current</t>
+                                        <t t-elif="sg_type == 'voltage'"><i class="fa fa-bolt text-warning me-2"/>Voltage</t>
+                                        <t t-elif="sg_type == 'power'"><i class="fa fa-fire text-danger me-2"/>Power</t>
+                                        <t t-elif="sg_type == 'frequency'"><i class="fa fa-signal text-primary me-2"/>Frequency</t>
+                                        <t t-elif="sg_type == 'dbm'"><i class="fa fa-rss text-primary me-2"/>dBm</t>
+                                        <t t-else=""><i class="fa fa-tachometer text-muted me-2"/><span class="text-capitalize" t-esc="sg_type"/></t>
+                                        <!-- Graph button → modal -->
+                                        <button class="ms-auto btn btn-outline-secondary btn-sm py-0 px-1"
+                                                data-bs-toggle="modal" data-bs-target="#obsGraphModal"
+                                                t-attf-data-graph-src="/my/observium/{{ device.get('device_id') }}/graph/device_{{ sg_type }}?period=-1d"
+                                                t-attf-data-graph-title="{{ sg_type | title }}"
+                                                title="View graph">
+                                            <i class="fa fa-area-chart"/>
+                                        </button>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <t t-foreach="sg[1]" t-as="sensor">
+                                            <t t-set="s_ev" t-value="sensor.get('sensor_event','')"/>
+                                            <div class="obs-status-row">
+                                                <span class="obs-status-name" t-esc="sensor.get('sensor_descr','')"/>
+                                                <div class="obs-status-bar">
+                                                    <div t-attf-class="obs-status-line {{ 'bg-danger' if s_ev=='alert' else 'bg-warning' if s_ev=='warn' else 'bg-success' }}"/>
+                                                </div>
+                                                <span t-attf-class="badge {{ 'bg-danger' if s_ev=='alert' else 'bg-warning text-dark' if s_ev=='warn' else 'bg-success' }}">
+                                                    <t t-esc="str(sensor.get('sensor_value','N/A'))"/>
+                                                    <span class="ms-1 fw-normal opacity-75" t-esc="sensor.get('sensor_unit','')"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+
+                        </div><!-- /right col -->
+                    </div>
+                </div><!-- /tab-overview -->
+
+
+                <!-- ────── TAB: GRAPHS ──────────────────────────────── -->
+                <div class="tab-pane fade" id="tab-graphs" t-if="graph_types">
+                    <div class="d-flex align-items-center gap-3 mb-3 pt-3">
+                        <div class="btn-group btn-group-sm" id="obs-period-selector">
+                            <button class="btn btn-outline-primary active" data-period="-6h">6h</button>
+                            <button class="btn btn-outline-primary" data-period="-1d">24h</button>
+                            <button class="btn btn-outline-primary" data-period="-7d">7d</button>
+                            <button class="btn btn-outline-primary" data-period="-30d">30d</button>
+                        </div>
+                        <small class="text-muted">
+                            <i class="fa fa-info-circle me-1"/>
+                            <strong t-esc="len(graph_types)"/> graphs enabled for this device
+                        </small>
+                    </div>
+
+                    <!-- Performance group -->
+                    <t t-set="g_perf" t-value="[g for g in graph_types if g[3]=='performance']"/>
+                    <t t-if="g_perf">
+                        <div class="obs-graph-group-title"><i class="fa fa-tachometer me-2"/>Performance</div>
+                        <div class="row g-3 mb-4">
+                            <t t-foreach="g_perf" t-as="gr"><div class="col-xl-6"><t t-call="we_portal_observium.obs_graph_card_tpl"/></div></t>
+                        </div>
+                    </t>
+                    <!-- Network group -->
+                    <t t-set="g_net" t-value="[g for g in graph_types if g[3]=='network']"/>
+                    <t t-if="g_net">
+                        <div class="obs-graph-group-title"><i class="fa fa-exchange me-2"/>Network</div>
+                        <div class="row g-3 mb-4">
+                            <t t-foreach="g_net" t-as="gr"><div class="col-xl-6"><t t-call="we_portal_observium.obs_graph_card_tpl"/></div></t>
+                        </div>
+                    </t>
+                    <!-- System group -->
+                    <t t-set="g_sys" t-value="[g for g in graph_types if g[3]=='system']"/>
+                    <t t-if="g_sys">
+                        <div class="obs-graph-group-title"><i class="fa fa-cog me-2"/>System</div>
+                        <div class="row g-3 mb-4">
+                            <t t-foreach="g_sys" t-as="gr"><div class="col-xl-6"><t t-call="we_portal_observium.obs_graph_card_tpl"/></div></t>
+                        </div>
+                    </t>
+                    <!-- Sensors group -->
+                    <t t-set="g_sens" t-value="[g for g in graph_types if g[3]=='sensors']"/>
+                    <t t-if="g_sens">
+                        <div class="obs-graph-group-title"><i class="fa fa-thermometer-half me-2"/>Sensors</div>
+                        <div class="row g-3 mb-4">
+                            <t t-foreach="g_sens" t-as="gr"><div class="col-xl-6"><t t-call="we_portal_observium.obs_graph_card_tpl"/></div></t>
+                        </div>
+                    </t>
+                </div><!-- /tab-graphs -->
+
+
+                <!-- ────── TAB: HEALTH ──────────────────────────────── -->
+                <div class="tab-pane fade" id="tab-health" t-if="sensors or statuses">
+                    <div class="row g-3 pt-3">
+                        <t t-if="statuses">
+                            <div class="col-12">
+                                <div class="card obs-info-card">
+                                    <div class="card-header obs-card-header"><i class="fa fa-traffic-light text-primary me-2"/>Status Indicators</div>
+                                    <div class="card-body p-0">
+                                        <table class="table table-sm table-hover mb-0">
+                                            <thead class="table-light"><tr><th>Component</th><th>Class</th><th>State</th><th>Value</th></tr></thead>
                                             <tbody>
-                                                <tr>
-                                                    <td class="text-muted" width="40%"><i class="fa fa-fw fa-hashtag me-1"/>Device ID</td>
-                                                    <td><code t-esc="device.get('device_id', 'N/A')"/></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-server me-1"/>Hostname</td>
-                                                    <td><code t-esc="device.get('hostname', 'N/A')"/></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-globe me-1"/>IP Address</td>
-                                                    <td><code t-esc="device.get('ip', 'N/A')"/></td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-linux me-1"/>OS</td>
-                                                    <td>
-                                                        <t t-if="device.get('os')">
-                                                            <span class="badge bg-info bg-opacity-10 text-dark border border-dark border-opacity-5"
-                                                                  t-esc="device.get('os')"/>
-                                                            <t t-if="device.get('distro')">
-                                                                <span class="ms-1 text-muted small"
-                                                                      t-esc="'{} {}'.format(device.get('distro',''), device.get('distro_ver','') or '').strip()"/>
-                                                            </t>
-                                                        </t>
-                                                        <t t-else=""><span class="text-muted">N/A</span></t>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-code me-1"/>Kernel</td>
-                                                    <td class="small" t-esc="device.get('kernel', 'N/A')"/>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-microchip me-1"/>Hardware</td>
-                                                    <td class="small" t-esc="device.get('hardware', 'N/A')"/>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-tag me-1"/>Type</td>
-                                                    <td t-esc="device.get('type', 'N/A')"/>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-map-marker me-1"/>Location</td>
-                                                    <td t-esc="device.get('location', 'N/A')"/>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-clock-o me-1"/>Last Polled</td>
-                                                    <td class="small" t-esc="device.get('last_polled', 'N/A')"/>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-user me-1"/>Contact</td>
-                                                    <td class="small" t-esc="device.get('sysContact', 'N/A')"/>
-                                                </tr>
-                                                <tr>
-                                                    <td class="text-muted"><i class="fa fa-fw fa-exchange me-1"/>SNMP</td>
-                                                    <td class="small">
-                                                        v<t t-esc="device.get('snmp_version', 'N/A')"/>
-                                                        / port <t t-esc="device.get('snmp_port', '161')"/>
-                                                    </td>
-                                                </tr>
+                                                <t t-foreach="statuses" t-as="st">
+                                                    <t t-set="st_ev" t-value="st.get('status_event', st.get('event',''))"/>
+                                                    <tr>
+                                                        <td t-esc="st.get('status_descr') or st.get('status_name','')"/>
+                                                        <td><span class="badge bg-secondary bg-opacity-20 text-dark" t-esc="st.get('status_class', st.get('class',''))"/></td>
+                                                        <td><span t-attf-class="badge {{ 'bg-success' if st_ev=='ok' else 'bg-danger' if st_ev=='alert' else 'bg-secondary' }}" t-esc="st_ev or 'N/A'"/></td>
+                                                        <td class="small text-muted" t-esc="st.get('status_value','')"/>
+                                                    </tr>
+                                                </t>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Performance -->
-                            <div class="col-md-6">
-                                <div class="card border-1 shadow-sm h-100">
-                                    <div class="card-header bg-transparent fw-bold">
-                                        <i class="fa fa-tachometer text-primary me-2"/>Performance
-                                    </div>
-                                    <div class="card-body">
-                                        <!-- CPU -->
-                                        <div class="mb-3">
-                                            <div class="d-flex justify-content-between mb-1">
-                                                <small class="fw-bold">
-                                                    <i class="fa fa-microchip me-1 text-muted"/>CPU Usage
-                                                    <t t-if="processors">
-                                                        <span class="text-muted fw-normal">(<t t-esc="len(processors)"/> core(s))</span>
-                                                    </t>
-                                                </small>
-                                                <small t-attf-class="fw-bold {{ 'text-danger' if cpu_avg > 85 else 'text-warning' if cpu_avg > 60 else 'text-success' }}">
-                                                    <t t-esc="str(cpu_avg) + '%'"/>
-                                                </small>
-                                            </div>
-                                            <div class="progress obs-progress">
-                                                <div t-attf-class="progress-bar {{ 'bg-danger' if cpu_avg > 85 else 'bg-warning' if cpu_avg > 60 else 'bg-primary' }}"
-                                                     t-attf-style="width: {{ str(cpu_avg) }}%"/>
-                                            </div>
-                                            <t t-if="processors">
-                                                <small class="text-muted" t-esc="processors[0].get('processor_descr', '')"/>
-                                            </t>
-                                        </div>
-
-                                        <!-- Memory -->
-                                        <div class="mb-3">
-                                            <div class="d-flex justify-content-between mb-1">
-                                                <small class="fw-bold">
-                                                    <i class="fa fa-database me-1 text-muted"/>
-                                                    <t t-esc="mem_descr or 'Memory'"/>
-                                                </small>
-                                                <small t-attf-class="fw-bold {{ 'text-danger' if mem_perc > 85 else 'text-warning' if mem_perc > 60 else 'text-success' }}">
-                                                    <t t-esc="str(mem_perc) + '%'"/>
-                                                    <t t-if="mem_total_gb">
-                                                        <span class="text-muted fw-normal">
-                                                            (<t t-esc="str(mem_used_gb)"/>/<t t-esc="str(mem_total_gb)"/> GB)
-                                                        </span>
-                                                    </t>
-                                                </small>
-                                            </div>
-                                            <div class="progress obs-progress">
-                                                <div t-attf-class="progress-bar {{ 'bg-danger' if mem_perc > 85 else 'bg-warning' if mem_perc > 60 else 'bg-success' }}"
-                                                     t-attf-style="width: {{ str(mem_perc) }}%"/>
-                                            </div>
-                                        </div>
-
-                                        <!-- Storage -->
-                                        <t t-if="storages">
-                                            <div class="mb-1">
-                                                <small class="fw-bold">
-                                                    <i class="fa fa-hdd-o me-1 text-muted"/>Storage
-                                                </small>
-                                            </div>
-                                            <t t-foreach="storages" t-as="stor">
-                                                <t t-set="stor_perc" t-value="int(stor.get('storage_perc', 0) or 0)"/>
-                                                <div class="mb-2">
-                                                    <div class="d-flex justify-content-between mb-1">
-                                                        <small class="text-muted" t-esc="stor.get('storage_descr', 'Disk')"/>
-                                                        <small t-attf-class="{{ 'text-danger' if stor_perc > 85 else 'text-warning' if stor_perc > 60 else 'text-muted' }}">
-                                                            <t t-esc="str(stor_perc) + '%'"/>
-                                                            <span class="text-muted">
-                                                                (<t t-esc="str(round(int(stor.get('storage_used',0) or 0)/(1024**3),1))"/>/<t t-esc="str(round(int(stor.get('storage_size',0) or 0)/(1024**3),1))"/> GB)
-                                                            </span>
-                                                        </small>
-                                                    </div>
-                                                    <div class="progress obs-progress">
-                                                        <div t-attf-class="progress-bar {{ 'bg-danger' if stor_perc > 85 else 'bg-warning' if stor_perc > 60 else 'bg-info' }}"
-                                                             t-attf-style="width: {{ str(stor_perc) }}%"/>
-                                                    </div>
-                                                </div>
-                                            </t>
-                                        </t>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- IP Addresses -->
-                        <t t-if="addresses">
-                            <div class="card border-1 shadow-sm mb-4">
-                                <div class="card-header bg-transparent fw-bold">
-                                    <i class="fa fa-globe text-primary me-2"/>IP Addresses
-                                </div>
-                                <div class="card-body p-0">
-                                    <table class="table table-sm table-hover mb-0">
-                                        <thead class="table-light">
-                                            <tr><th>Address</th><th>Prefix</th><th>Network</th><th>Type</th></tr>
-                                        </thead>
-                                        <tbody>
-                                            <t t-foreach="addresses" t-as="addr">
-                                                <tr>
-                                                    <td><code t-esc="addr.get('ipv4_address', 'N/A')"/></td>
-                                                    <td t-esc="'/' + str(addr.get('ipv4_prefixlen', ''))"/>
-                                                    <td class="small text-muted" t-esc="addr.get('ipv4_network', 'N/A')"/>
-                                                    <td>
-                                                        <t t-set="atype" t-value="addr.get('ipv4_type', '')"/>
-                                                        <t t-if="atype == 'loopback'">
-                                                            <span class="badge bg-info bg-opacity-30 text-dark border border-info border-opacity-50">loopback</span>
-                                                        </t>
-                                                        <t t-elif="atype == 'private'">
-                                                            <span class="badge bg-success bg-opacity-30 text-dark border border-success border-opacity-50">private</span>
-                                                        </t>
-                                                        <t t-elif="atype in ['public', 'global']">
-                                                            <span class="badge bg-danger bg-opacity-30 text-dark border border-danger border-opacity-50">public</span>
-                                                        </t>
-                                                        <t t-else="">
-                                                            <span class="badge bg-secondary bg-opacity-20 text-dark" t-esc="atype or 'N/A'"/>
-                                                        </t>
-                                                    </td>
-                                                </tr>
-                                            </t>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
                         </t>
-
-                        <!-- Component Status -->
-                        <t t-if="statuses">
-                            <div class="card border-1 shadow-sm mb-4">
-                                <div class="card-header bg-transparent fw-bold">
-                                    <i class="fa fa-heartbeat text-primary me-2"/>Component Status
-                                </div>
-                                <div class="card-body p-0">
-                                    <table class="table table-sm table-hover mb-0">
-                                        <thead class="table-light">
-                                            <tr><th>Component</th><th>Class</th><th>State</th><th>Value</th></tr>
-                                        </thead>
-                                        <tbody>
-                                            <t t-foreach="statuses" t-as="st">
-                                                <t t-set="st_event" t-value="st.get('status_event', st.get('event', ''))"/>
-                                                <tr>
-                                                    <td class="small" t-esc="st.get('status_descr') or st.get('status_name', 'N/A')"/>
-                                                    <td>
-                                                        <span class="badge bg-secondary bg-opacity-20 text-dark"
-                                                              t-esc="st.get('status_class', st.get('class', 'N/A'))"/>
-                                                    </td>
-                                                    <td>
-                                                        <span t-attf-class="badge {{ 'bg-success' if st_event == 'ok' else 'bg-danger' if st_event == 'alert' else 'bg-warning text-dark' }}">
-                                                            <t t-esc="st_event or 'N/A'"/>
-                                                        </span>
-                                                    </td>
-                                                    <td class="small text-muted" t-esc="st.get('status_value', '')"/>
-                                                </tr>
-                                            </t>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </t>
-
-                    </div><!-- /tab-overview -->
-
-
-                    <!-- TAB 2: INTERFACES -->
-                    <div class="tab-pane fade" id="tab-ports" t-if="ports">
-                        <div class="card border-1 shadow-sm">
-                            <div class="card-header bg-transparent d-flex align-items-center justify-content-between">
-                                <span class="fw-bold">
-                                    <i class="fa fa-ethernet text-primary me-2"/>Interfaces
-                                </span>
-                                <div class="d-flex gap-2">
-                                    <span class="badge bg-success">
-                                        <i class="fa fa-arrow-up me-1"/><t t-esc="len(ports_up)"/> up
-                                    </span>
-                                    <span class="badge bg-danger">
-                                        <i class="fa fa-arrow-down me-1"/><t t-esc="len(ports_down)"/> down
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="card-body p-0">
-                                <table class="table table-sm table-hover mb-0">
-                                    <thead class="table-light">
-                                        <tr><th>Interface</th><th>Description</th><th>Speed</th><th>State</th><th>Graphs</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <t t-foreach="ports" t-as="port">
-                                            <t t-set="p_up" t-value="port.get('ifOperStatus') == 'up'"/>
-                                            <t t-set="p_admin_down" t-value="port.get('ifAdminStatus') == 'down'"/>
-                                            <tr>
-                                                <td><code class="small" t-esc="port.get('ifDescr') or port.get('port_label', 'N/A')"/></td>
-                                                <td class="small text-muted"><t t-esc="(port.get('ifAlias') or '')[:40]"/></td>
-                                                <td class="small text-muted">
-                                                    <t t-if="port.get('ifSpeed')">
-                                                        <t t-esc="str(int(int(port.get('ifSpeed', 0) or 0) / 1e6)) + ' Mbps'"/>
-                                                    </t>
-                                                    <t t-else="">—</t>
-                                                </td>
-                                                <td>
-                                                    <t t-if="p_admin_down">
-                                                        <span class="badge bg-secondary">admin-down</span>
-                                                    </t>
-                                                    <t t-elif="p_up">
-                                                        <span class="badge bg-success">up</span>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <span class="badge bg-danger">down</span>
-                                                    </t>
-                                                </td>
-                                                <td>
-                                                    <!-- FIX #8: device_id is now part of the URL -->
-                                                    <t t-if="port.get('port_id')">
-                                                        <a t-attf-href="/my/observium/{{ device_id }}/port/{{ port.get('port_id') }}/graph/port_bits?period=-1d"
-                                                           class="btn btn-outline-primary btn-sm py-0 px-2"
-                                                           target="_blank"
-                                                           title="Traffic graph">
-                                                            <i class="fa fa-area-chart"/>
-                                                        </a>
-                                                    </t>
-                                                </td>
-                                            </tr>
-                                        </t>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div><!-- /tab-ports -->
-
-
-                    <!-- TAB 3: SENSORS -->
-                    <div class="tab-pane fade" id="tab-sensors" t-if="sensors">
                         <t t-foreach="sensor_groups.items()" t-as="sg">
-                            <t t-set="sg_type" t-value="sg[0]"/>
-                            <t t-set="sg_items" t-value="sg[1]"/>
-                            <div class="card border-1 shadow-sm mb-3">
-                                <div class="card-header bg-transparent fw-bold text-capitalize">
-                                    <t t-if="sg_type == 'temperature'"><i class="fa fa-thermometer-half text-danger me-2"/>Temperature</t>
-                                    <t t-elif="sg_type == 'voltage'"><i class="fa fa-bolt text-warning me-2"/>Voltage</t>
-                                    <t t-elif="sg_type == 'fanspeed'"><i class="fa fa-refresh text-info me-2"/>Fan Speed</t>
-                                    <t t-elif="sg_type == 'current'"><i class="fa fa-plug text-primary me-2"/>Current</t>
-                                    <t t-else=""><i class="fa fa-tachometer text-muted me-2"/><t t-esc="sg_type"/></t>
-                                </div>
-                                <div class="card-body p-0">
-                                    <table class="table table-sm table-hover mb-0">
-                                        <thead class="table-light">
-                                            <tr><th>Sensor</th><th>Value</th><th>Limits (warn/alert)</th><th>State</th></tr>
-                                        </thead>
-                                        <tbody>
-                                            <t t-foreach="sg_items" t-as="sensor">
-                                                <t t-set="s_event" t-value="sensor.get('sensor_event', '')"/>
-                                                <tr>
-                                                    <td class="small" t-esc="sensor.get('sensor_descr', 'N/A')"/>
-                                                    <td class="fw-bold">
-                                                        <t t-esc="sensor.get('sensor_value', 'N/A')"/>
-                                                        <span class="text-muted fw-normal ms-1" t-esc="sensor.get('sensor_unit', '')"/>
-                                                    </td>
-                                                    <td class="small text-muted">
-                                                        <t t-esc="sensor.get('sensor_limit_warn', '—')"/> / <t t-esc="sensor.get('sensor_limit', '—')"/>
-                                                    </td>
-                                                    <td>
-                                                        <span t-attf-class="badge {{ 'bg-success' if s_event == 'ok' else 'bg-danger' if s_event == 'alert' else 'bg-warning text-dark' if s_event == 'warn' else 'bg-secondary' }}">
-                                                            <t t-esc="s_event or 'N/A'"/>
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                            </t>
-                                        </tbody>
-                                    </table>
+                            <div class="col-md-6">
+                                <div class="card obs-info-card h-100">
+                                    <div class="card-header obs-card-header text-capitalize">
+                                        <t t-if="sg[0]=='temperature'"><i class="fa fa-thermometer-half text-danger me-2"/></t>
+                                        <t t-elif="sg[0]=='fanspeed'"><i class="fa fa-refresh text-info me-2"/></t>
+                                        <t t-elif="sg[0] in ['voltage','current','power']"><i class="fa fa-bolt text-warning me-2"/></t>
+                                        <t t-else=""><i class="fa fa-tachometer text-muted me-2"/></t>
+                                        <t t-esc="sg[0]"/>
+                                    </div>
+                                    <div class="card-body p-0">
+                                        <table class="table table-sm table-hover mb-0">
+                                            <thead class="table-light"><tr><th>Sensor</th><th>Value</th><th>Limits</th><th>State</th></tr></thead>
+                                            <tbody>
+                                                <t t-foreach="sg[1]" t-as="sensor">
+                                                    <t t-set="s_ev" t-value="sensor.get('sensor_event','')"/>
+                                                    <tr>
+                                                        <td class="small" t-esc="sensor.get('sensor_descr','')"/>
+                                                        <td class="fw-bold small"><t t-esc="sensor.get('sensor_value','N/A')"/><span class="text-muted fw-normal ms-1" t-esc="sensor.get('sensor_unit','')"/></td>
+                                                        <td class="small text-muted"><t t-esc="sensor.get('sensor_limit_warn','—')"/>/<t t-esc="sensor.get('sensor_limit','—')"/></td>
+                                                        <td><span t-attf-class="badge {{ 'bg-success' if s_ev=='ok' else 'bg-danger' if s_ev=='alert' else 'bg-warning text-dark' if s_ev=='warn' else 'bg-secondary' }}" t-esc="s_ev or 'N/A'"/></td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
                         </t>
-                    </div><!-- /tab-sensors -->
+                    </div>
+                </div><!-- /tab-health -->
 
 
-                    <!-- TAB 4: ALERTS -->
-                    <div class="tab-pane fade" id="tab-alerts" t-if="alerts">
-                        <t t-if="alerts_failed">
-                            <div class="alert alert-danger d-flex gap-2 align-items-center mb-3">
-                                <i class="fa fa-bell fa-lg"/>
-                                <strong><t t-esc="len(alerts_failed)"/> active alert(s) on this device</strong>
+                <!-- ────── TAB: PORTS ──────────────────────────────── -->
+                <div class="tab-pane fade" id="tab-ports" t-if="ports">
+                    <div class="card obs-info-card mt-3">
+                        <div class="card-header obs-card-header">
+                            <i class="fa fa-ethernet text-primary me-2"/>Interfaces
+                            <div class="ms-auto d-flex gap-2">
+                                <span class="badge bg-success"><i class="fa fa-arrow-up me-1"/><t t-esc="len(ports_up)"/> up</span>
+                                <span class="badge bg-danger"><i class="fa fa-arrow-down me-1"/><t t-esc="len(ports_down)"/> down</span>
                             </div>
-                        </t>
-                        <t t-else="">
-                            <div class="alert alert-success d-flex gap-2 align-items-center mb-3">
-                                <i class="fa fa-check-circle fa-lg"/>
-                                <strong>No active alerts on this device</strong>
-                            </div>
-                        </t>
-                        <div class="card border-1 shadow-sm">
+                        </div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr><th>Interface</th><th>Description</th><th>Speed</th><th>Admin</th><th>State</th><th class="text-center">Graph</th></tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="ports" t-as="port">
+                                        <t t-set="p_up3" t-value="port.get('ifOperStatus') == 'up'"/>
+                                        <t t-set="p_adm" t-value="port.get('ifAdminStatus','up')"/>
+                                        <tr>
+                                            <td><code class="small" t-esc="port.get('ifDescr') or port.get('port_label','?')"/></td>
+                                            <td class="small text-muted"><t t-esc="(port.get('ifAlias') or '')[:40]"/></td>
+                                            <td class="small text-muted">
+                                                <t t-if="port.get('ifSpeed')"><t t-esc="str(int(int(port.get('ifSpeed',0) or 0)/1e6))"/> Mbps</t>
+                                                <t t-else="">—</t>
+                                            </td>
+                                            <td><span t-attf-class="badge {{ 'bg-success bg-opacity-25 text-success' if p_adm=='up' else 'bg-secondary bg-opacity-25 text-secondary' }}" t-esc="p_adm"/></td>
+                                            <td><span t-attf-class="badge {{ 'bg-success' if p_up3 else 'bg-danger' }}"><i t-attf-class="fa {{ 'fa-check' if p_up3 else 'fa-times' }} me-1"/><t t-esc="'up' if p_up3 else 'down'"/></span></td>
+                                            <td class="text-center">
+                                                <t t-if="port.get('port_id')">
+                                                    <!-- Opens MODAL with period selector -->
+                                                    <button class="btn btn-outline-primary btn-sm py-0 px-2 obs-port-graph-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#obsGraphModal"
+                                                            t-attf-data-graph-src="/my/observium/{{ device_id }}/port/{{ port.get('port_id') }}/graph/port_bits?period=-1d"
+                                                            t-attf-data-graph-title="{{ port.get('ifDescr') or port.get('port_label','Port') }} — Traffic"
+                                                            t-attf-data-port-id="{{ port.get('port_id') }}"
+                                                            t-attf-data-device-id="{{ device_id }}"
+                                                            title="View traffic graph">
+                                                        <i class="fa fa-area-chart"/>
+                                                    </button>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div><!-- /tab-ports -->
+
+
+                <!-- ────── TAB: INVENTORY ───────────────────────────── -->
+                <div class="tab-pane fade" id="tab-inventory" t-if="addresses">
+                    <div class="card obs-info-card mt-3">
+                        <div class="card-header obs-card-header"><i class="fa fa-globe text-primary me-2"/>IP Addresses</div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead class="table-light"><tr><th>Address</th><th>Prefix</th><th>Network</th><th>Type</th></tr></thead>
+                                <tbody>
+                                    <t t-foreach="addresses" t-as="addr">
+                                        <t t-set="at" t-value="addr.get('ipv4_type','')"/>
+                                        <tr>
+                                            <td><code t-esc="addr.get('ipv4_address','N/A')"/></td>
+                                            <td class="text-muted">/<t t-esc="addr.get('ipv4_prefixlen','')"/></td>
+                                            <td class="small text-muted" t-esc="addr.get('ipv4_network','')"/>
+                                            <td><span t-attf-class="badge {{ 'bg-info bg-opacity-30 text-dark' if at=='loopback' else 'bg-success bg-opacity-30 text-dark' if at=='private' else 'bg-danger bg-opacity-30 text-dark' if at in ['public','global'] else 'bg-secondary bg-opacity-20 text-dark' }}" t-esc="at or 'N/A'"/></td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ────── TAB: ALERTS ──────────────────────────────── -->
+                <div class="tab-pane fade" id="tab-alerts" t-if="alerts">
+                    <div class="mt-3">
+                        <div t-attf-class="alert {{ 'alert-danger' if alerts_failed else 'alert-success' }} d-flex gap-2 align-items-center mb-3">
+                            <i t-attf-class="fa fa-lg {{ 'fa-bell' if alerts_failed else 'fa-check-circle' }}"/>
+                            <strong>
+                                <t t-if="alerts_failed"><t t-esc="len(alerts_failed)"/> active alert(s)</t>
+                                <t t-else="">No active alerts</t>
+                            </strong>
+                        </div>
+                        <div class="card obs-info-card">
                             <div class="card-body p-0">
                                 <table class="table table-sm table-hover mb-0">
-                                    <thead class="table-light">
-                                        <tr><th>Alert</th><th>Entity</th><th>Status</th><th>Since</th></tr>
-                                    </thead>
+                                    <thead class="table-light"><tr><th>Alert</th><th>Entity</th><th>Status</th><th>Since</th></tr></thead>
                                     <tbody>
                                         <t t-foreach="alerts" t-as="alert">
-                                            <t t-set="a_status" t-value="alert.get('status', '')"/>
+                                            <t t-set="a_st" t-value="alert.get('status','')"/>
                                             <tr>
-                                                <td class="small fw-bold" t-esc="alert.get('alert_test_name') or alert.get('alert_name', 'N/A')"/>
-                                                <td class="small">
-                                                    <span class="badge bg-info bg-opacity-20 text-dark border border-dark border-opacity-10"
-                                                          t-esc="alert.get('entity_type', 'N/A')"/>
-                                                    <span class="ms-1 text-muted" t-esc="alert.get('entity_name', '')"/>
-                                                </td>
-                                                <td>
-                                                    <span t-attf-class="badge {{ 'bg-danger' if a_status == 'failed' else 'bg-warning text-dark' if a_status == 'delayed' else 'bg-secondary' }}">
-                                                        <t t-esc="a_status"/>
-                                                    </span>
-                                                </td>
-                                                <td class="small text-muted" t-esc="alert.get('last_changed') or alert.get('alert_timestamp', 'N/A')"/>
+                                                <td class="fw-bold small" t-esc="alert.get('alert_test_name') or alert.get('alert_name','N/A')"/>
+                                                <td class="small"><span class="badge bg-info bg-opacity-20 text-dark border border-dark border-opacity-10" t-esc="alert.get('entity_type','N/A')"/><span class="ms-1 text-muted" t-esc="alert.get('entity_name','')"/></td>
+                                                <td><span t-attf-class="badge {{ 'bg-danger' if a_st=='failed' else 'bg-warning text-dark' if a_st=='delayed' else 'bg-secondary' }}" t-esc="a_st"/></td>
+                                                <td class="small text-muted" t-esc="alert.get('last_changed') or alert.get('alert_timestamp','N/A')"/>
                                             </tr>
                                         </t>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div><!-- /tab-alerts -->
+                    </div>
+                </div>
 
 
-                    <!-- TAB 5: NEIGHBOURS -->
-                    <div class="tab-pane fade" id="tab-neighbours" t-if="neighbours">
-                        <div class="card border-1 shadow-sm">
-                            <div class="card-header bg-transparent fw-bold">
-                                <i class="fa fa-sitemap text-primary me-2"/>Network Neighbours
-                                <span class="text-muted fw-normal small ms-2">(CDP/LLDP)</span>
-                            </div>
-                            <div class="card-body p-0">
-                                <table class="table table-sm table-hover mb-0">
-                                    <thead class="table-light">
-                                        <tr><th>Remote Host</th><th>Local Port</th><th>Remote Port</th><th>Protocol</th><th>Platform</th></tr>
-                                    </thead>
-                                    <tbody>
-                                        <t t-foreach="neighbours" t-as="nb">
-                                            <tr>
-                                                <td class="small fw-bold" t-esc="nb.get('remote_hostname') or nb.get('remote_device', 'N/A')"/>
-                                                <td><code class="small" t-esc="nb.get('port_label') or nb.get('port_id', 'N/A')"/></td>
-                                                <td><code class="small" t-esc="nb.get('remote_port') or nb.get('remote_port_id', 'N/A')"/></td>
-                                                <td>
-                                                    <span class="badge bg-secondary bg-opacity-20 text-dark"
-                                                          t-esc="nb.get('protocol', 'N/A').upper()"/>
-                                                </td>
-                                                <td class="small text-muted" t-esc="nb.get('platform', '')"/>
-                                            </tr>
-                                        </t>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div><!-- /tab-neighbours -->
-
-
-                    <!-- TAB 6: GRAPHS -->
-                    <div class="tab-pane fade" id="tab-graphs">
-                        <div class="card border-1 shadow-sm">
-                            <div class="card-header bg-transparent fw-bold">
-                                <i class="fa fa-area-chart text-primary me-2"/>Performance Graphs
-                                <span class="text-muted fw-normal small ms-2">Last 24 hours</span>
-                            </div>
-                            <div class="card-body">
-                                <div class="btn-group btn-group-sm mb-4" id="obs-period-selector">
-                                    <button class="btn btn-outline-primary active" data-period="-1d">24h</button>
-                                    <button class="btn btn-outline-primary" data-period="-7d">7d</button>
-                                    <button class="btn btn-outline-primary" data-period="-30d">30d</button>
-                                </div>
-                                <div class="row g-4">
-                                    <t t-foreach="graph_types" t-as="graph">
-                                        <div class="col-xl-6">
-                                            <div class="obs-graph-card">
-                                                <div class="obs-graph-header">
-                                                    <i t-attf-class="fa {{ graph[2] }} me-2 text-primary"/>
-                                                    <t t-esc="graph[1]"/>
-                                                </div>
-                                                <!-- FIX #11: spinner shown while image loads -->
-                                                <div class="obs-graph-body">
-                                                    <div class="obs-graph-spinner text-muted small">
-                                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"/>
-                                                        Loading graph...
-                                                    </div>
-                                                    <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/{{ graph[0] }}?period=-1d"
-                                                         t-attf-data-graph="{{ graph[0] }}"
-                                                         t-attf-data-device="{{ device.get('device_id') }}"
-                                                         class="obs-graph-img img-fluid d-none"
-                                                         onload="this.classList.remove('d-none'); this.previousElementSibling.remove();"
-                                                         onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;&lt;i class=&quot;fa fa-exclamation-circle me-1&quot;/&gt;Graph not available&lt;/span&gt;'"
-                                                         alt="Performance graph"/>
-                                                </div>
-                                            </div>
-                                        </div>
+                <!-- ────── TAB: NEIGHBOURS ──────────────────────────── -->
+                <div class="tab-pane fade" id="tab-neighbours" t-if="neighbours">
+                    <div class="card obs-info-card mt-3">
+                        <div class="card-header obs-card-header"><i class="fa fa-sitemap text-primary me-2"/>Network Neighbours <span class="text-muted fw-normal small ms-2">(CDP/LLDP)</span></div>
+                        <div class="card-body p-0">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead class="table-light"><tr><th>Remote Host</th><th>Local Port</th><th>Remote Port</th><th>Protocol</th><th>Platform</th></tr></thead>
+                                <tbody>
+                                    <t t-foreach="neighbours" t-as="nb">
+                                        <tr>
+                                            <td class="fw-bold small" t-esc="nb.get('remote_hostname') or nb.get('remote_device','N/A')"/>
+                                            <td><code class="small" t-esc="nb.get('port_label') or nb.get('port_id','N/A')"/></td>
+                                            <td><code class="small" t-esc="nb.get('remote_port') or nb.get('remote_port_id','N/A')"/></td>
+                                            <td><span class="badge bg-secondary bg-opacity-20 text-dark" t-esc="(nb.get('protocol','N/A') or '').upper()"/></td>
+                                            <td class="small text-muted" t-esc="nb.get('platform','')"/>
+                                        </tr>
                                     </t>
-                                </div>
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
-                    </div><!-- /tab-graphs -->
+                    </div>
+                </div>
 
-                </div><!-- /tab-content -->
-            </t>
+            </div><!-- /tab-content -->
 
-            <!-- JS: period selector + deep-link from alerts badge -->
-            <script>
-                (function() {
-                    // Period selector in Graphs tab
-                    var selector = document.getElementById('obs-period-selector');
-                    if (selector) {
-                        selector.addEventListener('click', function(e) {
-                            var btn = e.target.closest('button[data-period]');
-                            if (!btn) return;
-                            var period = btn.dataset.period;
-                            selector.querySelectorAll('button').forEach(function(b) {
-                                b.classList.toggle('active', b === btn);
-                            });
-                            document.querySelectorAll('.obs-graph-img').forEach(function(img) {
-                                // Show spinner again while reloading
-                                img.classList.add('d-none');
-                                var spinner = document.createElement('div');
-                                spinner.className = 'obs-graph-spinner text-muted small';
-                                spinner.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Loading graph...';
-                                img.parentElement.insertBefore(spinner, img);
-                                img.src = '/my/observium/' + img.dataset.device + '/graph/'
-                                        + img.dataset.graph + '?period=' + period;
-                            });
-                        });
-                    }
-                    // Deep-link: Alert badge in header opens the alerts tab
-                    document.querySelectorAll('.obs-tab-link').forEach(function(link) {
-                        link.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            var target = link.getAttribute('data-bs-target');
-                            var tab = document.querySelector('[data-bs-target="' + target + '"]');
-                            if (tab) { bootstrap.Tab.getOrCreateInstance(tab).show(); }
-                        });
+            <!-- ══════════════════════════════════════════════════════════
+                 MODAL: graph viewer (port graphs + sensor graphs)
+            ═══════════════════════════════════════════════════════════ -->
+            <div class="modal fade" id="obsGraphModal" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header py-2">
+                            <h6 class="modal-title mb-0" id="obsGraphModalTitle">Graph</h6>
+                            <div class="btn-group btn-group-sm ms-3 d-none" id="obs-modal-period">
+                                <button class="btn btn-outline-secondary active" data-period="-6h">6h</button>
+                                <button class="btn btn-outline-secondary" data-period="-1d">24h</button>
+                                <button class="btn btn-outline-secondary" data-period="-7d">7d</button>
+                                <button class="btn btn-outline-secondary" data-period="-30d">30d</button>
+                            </div>
+                            <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal"/>
+                        </div>
+                        <div class="modal-body text-center p-3" id="obsGraphModalBody">
+                            <div class="obs-graph-spinner"><span class="spinner-border me-2"/>Loading graph...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </t><!-- /t if device -->
+
+        <!-- ══════════════════════════════════════════════════════════════
+             JAVASCRIPT
+        ═══════════════════════════════════════════════════════════════ -->
+        <script>
+        //<![CDATA[
+        (function () {
+            // Period selector (Graphs tab)
+            var sel = document.getElementById('obs-period-selector');
+            if (sel) {
+                sel.addEventListener('click', function (e) {
+                    var btn = e.target.closest('button[data-period]');
+                    if (!btn) return;
+                    var period = btn.dataset.period;
+                    sel.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b === btn); });
+                    document.querySelectorAll('.obs-graph-img[data-graph]').forEach(function (img) {
+                        img.classList.add('d-none');
+                        var sp = document.createElement('div');
+                        sp.className = 'obs-graph-spinner small';
+                        sp.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
+                        if (img.previousElementSibling &amp;&amp; img.previousElementSibling.classList.contains('obs-graph-spinner')) img.previousElementSibling.remove();
+                        img.parentElement.insertBefore(sp, img);
+                        img.src = '/my/observium/' + img.dataset.device + '/graph/' + img.dataset.graph + '?period=' + period;
                     });
-                })();
-            </script>
+                });
+            }
 
-        </t>
-    </template>
+            // Graph modal
+            var graphModal = document.getElementById('obsGraphModal');
+            if (graphModal) {
+                graphModal.addEventListener('show.bs.modal', function (e) {
+                    var trigger  = e.relatedTarget;
+                    var src      = trigger.dataset.graphSrc;
+                    var title    = trigger.dataset.graphTitle || 'Graph';
+                    var portId   = trigger.dataset.portId;
+                    var devId    = trigger.dataset.deviceId;
+
+                    document.getElementById('obsGraphModalTitle').textContent = title;
+                    var body = document.getElementById('obsGraphModalBody');
+                    body.innerHTML = '<div class="obs-graph-spinner"><span class="spinner-border me-2"></span>Loading graph...</div>';
+
+                    var periodBar = document.getElementById('obs-modal-period');
+                    var isPort = !!portId;
+                    periodBar.classList.toggle('d-none', !isPort);
+                    if (isPort) {
+                        periodBar.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.dataset.period === '-1d'); });
+                    }
+
+                    function loadGraph(period) {
+                        var imgSrc = isPort
+                            ? '/my/observium/' + devId + '/port/' + portId + '/graph/port_bits?period=' + period
+                            : src;
+                        body.innerHTML = '<img src="' + imgSrc + '" class="img-fluid" style="max-width:100%" '
+                            + 'onerror="this.parentElement.innerHTML=\'Graph not available\'" alt="Graph"/>';
+                    }
+
+                    loadGraph(isPort ? '-1d' : '');
+
+                    if (isPort) {
+                        periodBar.onclick = function(ev) {
+                            var b = ev.target.closest('button[data-period]');
+                            if (!b) return;
+                            periodBar.querySelectorAll('button').forEach(function(x){ x.classList.toggle('active', x===b); });
+                            loadGraph(b.dataset.period);
+                        };
+                    }
+                });
+                graphModal.addEventListener('hidden.bs.modal', function () {
+                    document.getElementById('obsGraphModalBody').innerHTML = '';
+                    document.getElementById('obs-modal-period').onclick = null;
+                });
+            }
+
+            // Alert badge click → open alerts tab
+            document.querySelectorAll('.obs-alert-badge[data-tab]').forEach(function(badge){
+                badge.addEventListener('click', function(){
+                    var t = document.querySelector('[data-bs-target="#' + badge.dataset.tab + '"]');
+                    if (t) bootstrap.Tab.getOrCreateInstance(t).show();
+                });
+            });
+        })();
+        //]]>
+        </script>
+
+    </t>
+</template>
+
+
+<!-- Sub-template: single graph card used in Graphs tab -->
+<template id="obs_graph_card_tpl">
+    <!-- expects: gr = (type, label, icon, group), device in context -->
+    <div class="obs-graph-card">
+        <div class="obs-graph-header">
+            <i t-attf-class="fa {{ gr[2] }} me-2 text-primary"/>
+            <t t-esc="gr[1]"/>
+        </div>
+        <div class="obs-graph-body">
+            <div class="obs-graph-spinner text-muted small">
+                <span class="spinner-border spinner-border-sm me-2" role="status"/>Loading graph...
+            </div>
+            <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/{{ gr[0] }}?period=-6h"
+                 t-attf-data-graph="{{ gr[0] }}"
+                 t-attf-data-device="{{ device.get('device_id') }}"
+                 class="obs-graph-img img-fluid d-none"
+                 onload="this.classList.remove('d-none'); this.previousElementSibling &amp;&amp; this.previousElementSibling.classList.contains('obs-graph-spinner') &amp;&amp; this.previousElementSibling.remove();"
+                 onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;&lt;i class=&quot;fa fa-ban me-1&quot;/&gt;Not available&lt;/span&gt;'"
+                 alt="Graph"/>
+        </div>
+    </div>
+</template>
+
 </odoo>
