@@ -699,28 +699,69 @@
         <script>
         //<![CDATA[
         (function () {
-            // Period selector (Graphs tab)
-            var sel = document.getElementById('obs-period-selector');
-            if (sel) {
-                sel.addEventListener('click', function (e) {
-                    var btn = e.target.closest('button[data-period]');
-                    if (!btn) return;
-                    var period = btn.dataset.period;
-                    sel.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b === btn); });
-                    document.querySelectorAll('.obs-graph-img[data-graph]').forEach(function (img) {
-                        img.classList.add('d-none');
+
+            // ── Period selector (Graphs tab) ──────────────────────────
+            // Use document-level delegation so it works regardless of tab state
+            document.addEventListener('click', function (e) {
+                var btn = e.target.closest('#obs-period-selector button[data-period]');
+                if (!btn) return;
+
+                var period = btn.dataset.period;
+
+                // Update active state
+                var sel = document.getElementById('obs-period-selector');
+                sel.querySelectorAll('button').forEach(function (b) {
+                    b.classList.remove('active');
+                });
+                btn.classList.add('active');
+
+                // Reload all graph images in the Graphs tab
+                document.querySelectorAll('#tab-graphs .obs-graph-img').forEach(function (img) {
+                    var graphType  = img.getAttribute('data-graph');
+                    var deviceId   = img.getAttribute('data-device');
+                    if (!graphType || !deviceId) return;
+
+                    // Remove "not available" message if present
+                    var naMsg = img.parentElement.querySelector('.obs-na-msg');
+                    if (naMsg) naMsg.remove();
+                    img.style.display = '';
+
+                    // Show spinner
+                    img.classList.add('d-none');
+                    var existing = img.parentElement.querySelector('.obs-graph-spinner');
+                    if (!existing) {
                         var sp = document.createElement('div');
-                        sp.className = 'obs-graph-spinner small';
-                        sp.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading...';
-                        if (img.previousElementSibling &amp;&amp; img.previousElementSibling.classList.contains('obs-graph-spinner')) img.previousElementSibling.remove();
+                        sp.className = 'obs-graph-spinner text-muted small';
+                        sp.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Loading graph...';
                         img.parentElement.insertBefore(sp, img);
-                        img.src = '/my/observium/' + img.dataset.device + '/graph/' + img.dataset.graph + '?period=' + period;
-                    });
+                    }
+
+                    // Set new src — load/error handlers already attached via obsAttachImgHandlers
+                    img.src = '/my/observium/' + deviceId + '/graph/' + graphType + '?period=' + period;
+                });
+            });
+
+            // ── Graph image load handlers (centralized) ──────────────
+            // Handles both initial load AND period-change reloads
+            function obsAttachImgHandlers(img) {
+                img.addEventListener('load', function () {
+                    img.classList.remove('d-none');
+                    var sp = img.parentElement.querySelector('.obs-graph-spinner');
+                    if (sp) sp.remove();
+                });
+                img.addEventListener('error', function () {
+                    var sp = img.parentElement.querySelector('.obs-graph-spinner');
+                    if (sp) sp.remove();
+                    img.style.display = 'none';
+                    if (!img.parentElement.querySelector('.obs-na-msg')) {
+                        var msg = document.createElement('span');
+                        msg.className = 'text-muted small obs-na-msg';
+                        msg.innerHTML = '<i class="fa fa-ban me-1"></i>Not available';
+                        img.parentElement.appendChild(msg);
+                    }
                 });
             }
-
-            // Graph modal
-            var graphModal = document.getElementById('obsGraphModal');
+            document.querySelectorAll('.obs-graph-img').forEach(obsAttachImgHandlers);
             if (graphModal) {
                 graphModal.addEventListener('show.bs.modal', function (e) {
                     var trigger  = e.relatedTarget;
@@ -796,8 +837,6 @@
                  t-attf-data-graph="{{ gr[0] }}"
                  t-attf-data-device="{{ device.get('device_id') }}"
                  class="obs-graph-img img-fluid d-none"
-                 onload="this.classList.remove('d-none'); this.previousElementSibling &amp;&amp; this.previousElementSibling.classList.contains('obs-graph-spinner') &amp;&amp; this.previousElementSibling.remove();"
-                 onerror="this.parentElement.innerHTML='&lt;span class=&quot;text-muted small&quot;&gt;&lt;i class=&quot;fa fa-ban me-1&quot;/&gt;Not available&lt;/span&gt;'"
                  alt="Graph"/>
         </div>
     </div>
