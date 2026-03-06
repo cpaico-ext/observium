@@ -61,24 +61,19 @@ class ObserviumPortalController(http.Controller):
 
     def _resolve_access(self, device_id=None):
         """
-        Central access-resolution method.
-
-        Returns a dict with:
-          - group_code (str|None)
-          - is_portal  (bool)
-          - identity_error (str|None) — set when a portal user has no group_code
-
-        When device_id is provided and the user has a group_code, also returns:
-          - device (dict|None) — already-fetched device data (zero extra API calls)
-
-        Raises Forbidden if the device is not accessible to the user's group.
+        Central access-resolution method. Results are cached per HTTP request
+        to avoid repeated API calls when multiple graphs load on the same page.
         """
+        # Request-level cache key
+        cache_key = '_obs_access_' + str(device_id or '__nodev__')
+        cached = getattr(request, cache_key, None)
+        if cached is not None:
+            return cached
+
         group_code, is_portal = self._get_partner_group_code()
 
-        # Portal user with no configured group → identity error (not a hard 403,
-        # we want to show a helpful message instead of a blank error page).
         if is_portal and not group_code:
-            return {
+            result = {
                 'group_code':      None,
                 'is_portal':       True,
                 'identity_error':  _(
@@ -87,6 +82,8 @@ class ObserviumPortalController(http.Controller):
                 ),
                 'device':          None,
             }
+            setattr(request, cache_key, result)
+            return result
 
         result = {
             'group_code':     group_code,
@@ -96,15 +93,12 @@ class ObserviumPortalController(http.Controller):
         }
 
         if device_id is not None:
-            # Admin without a group_code → unrestricted, fetch normally.
-            # Admin/portal with group_code → verify membership AND fetch in one call.
             device = self._observium().get_device_for_group(device_id, group_code)
             if device is None and group_code:
-                # Device doesn't exist OR not in the user's group → 403
-                # (we intentionally don't distinguish the two to avoid enumeration)
                 raise Forbidden()
             result['device'] = device
 
+        setattr(request, cache_key, result)
         return result
 
     def _safe_fetch(self, fn, *args, label='data', **kwargs):
@@ -210,16 +204,41 @@ class ObserviumPortalController(http.Controller):
 
 
         warnings = {}
-        addresses,  warnings['addresses']  = self._safe_fetch(svc.get_device_addresses,  device_id, label='addresses')
-        mempools,   warnings['mempools']   = self._safe_fetch(svc.get_device_mempools,   device_id, label='mempools')
-        processors, warnings['processors'] = self._safe_fetch(svc.get_device_processors, device_id, label='processors')
-        storages,   warnings['storages']   = self._safe_fetch(svc.get_device_storage,    device_id, label='storages')
-        alerts,     warnings['alerts']     = self._safe_fetch(svc.get_device_alerts,     device_id, label='alerts')
-        ports,      warnings['ports']      = self._safe_fetch(svc.get_device_ports,      device_id, label='ports')
-        sensors,    warnings['sensors']    = self._safe_fetch(svc.get_device_sensors,    device_id, label='sensors')
-        statuses,   warnings['statuses']   = self._safe_fetch(svc.get_device_status,     device_id, label='statuses')
-        neighbours, warnings['neighbours'] = self._safe_fetch(svc.get_device_neighbours, device_id, label='neighbours')
-        warnings = {k: v for k, v in warnings.items() if v}
+        from concurrent.futures import ThreadPoolExecutor, as_completed
+
+        tasks = {
+            'addresses':  lambda: self._safe_fetch(svc.get_device_addresses,  device_id, label='addresses'),
+            'mempools':   lambda: self._safe_fetch(svc.get_device_mempools,   device_id, label='mempools'),
+            'processors': lambda: self._safe_fetch(svc.get_device_processors, device_id, label='processors'),
+            'storages':   lambda: self._safe_fetch(svc.get_device_storage,    device_id, label='storages'),
+            'alerts':     lambda: self._safe_fetch(svc.get_device_alerts,     device_id, label='alerts'),
+            'ports':      lambda: self._safe_fetch(svc.get_device_ports,      device_id, label='ports'),
+            'sensors':    lambda: self._safe_fetch(svc.get_device_sensors,    device_id, label='sensors'),
+            'statuses':   lambda: self._safe_fetch(svc.get_device_status,     device_id, label='statuses'),
+            'neighbours': lambda: self._safe_fetch(svc.get_device_neighbours, device_id, label='neighbours'),
+        }
+        results = {}
+        with ThreadPoolExecutor(max_workers=9) as executor:
+            futures = {executor.submit(fn): key for key, fn in tasks.items()}
+            for future in as_completed(futures):
+                key = futures[future]
+                try:
+                    data, err = future.result()
+                except Exception as e:
+                    data, err = [], str(e)
+                results[key] = data
+                if err:
+                    warnings[key] = err
+
+        addresses  = results['addresses']
+        mempools   = results['mempools']
+        processors = results['processors']
+        storages   = results['storages']
+        alerts     = results['alerts']
+        ports      = results['ports']
+        sensors    = results['sensors']
+        statuses   = results['statuses']
+        neighbours = results['neighbours']
 
         cpu_avg = 0
         if processors:

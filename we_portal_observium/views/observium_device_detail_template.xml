@@ -697,17 +697,87 @@
         <!-- ══════════════════════════════════════════════════════════════
              JAVASCRIPT
         ═══════════════════════════════════════════════════════════════ -->
-        <script type="text/javascript" t-att-src="'/web/static/src/js/observium_device_detail.js'" defer="defer"/>
-        <script type="text/javascript">
-        //<![CDATA[
-        // Inline: load static asset via Odoo asset bundle path
-        (function() {
-            var s = document.createElement('script');
-            s.src = '/we_portal_observium/static/src/js/observium_device_detail.js';
-            document.head.appendChild(s);
-        })();
-        //]]>
-        </script>
+        <t t-set="obs_js">
+            <script>
+            (function () {
+                // Period selector
+                document.addEventListener('click', function (e) {
+                    var btn = e.target.closest('#obs-period-selector button[data-period]');
+                    if (!btn) return;
+                    var period = btn.dataset.period;
+                    document.querySelectorAll('#obs-period-selector button').forEach(function(b){ b.classList.toggle('active', b===btn); });
+                    document.querySelectorAll('#tab-graphs .obs-graph-img').forEach(function(img){
+                        var g = img.getAttribute('data-graph');
+                        var d = img.getAttribute('data-device');
+                        if (!g || !d) return;
+                        img.src = '/my/observium/'+d+'/graph/'+g+'?period='+period;
+                    });
+                });
+
+                // Modal
+                var _td = null;
+                document.addEventListener('click', function(e){
+                    var btn = e.target.closest('[data-bs-target="#obsGraphModal"]');
+                    if (!btn) return;
+                    _td = {
+                        portId: btn.getAttribute('data-port-id'),
+                        devId:  btn.getAttribute('data-device-id'),
+                        src:    btn.getAttribute('data-graph-src'),
+                        title:  btn.getAttribute('data-graph-title') || 'Graph'
+                    };
+                }, true);
+
+                var modal = document.getElementById('obsGraphModal');
+                if (modal) {
+                    modal.addEventListener('show.bs.modal', function(){
+                        if (!_td) return;
+                        document.getElementById('obsGraphModalTitle').textContent = _td.title;
+                        var body = document.getElementById('obsGraphModalBody');
+                        var pbar = document.getElementById('obs-modal-period');
+                        var isPort = !!_td.portId;
+                        pbar.classList.toggle('d-none', !isPort);
+
+                        function load(period) {
+                            var url = isPort
+                                ? '/my/observium/'+_td.devId+'/port/'+_td.portId+'/graph/port_bits?period='+period
+                                : _td.src;
+                            var img = new Image();
+                            img.className = 'img-fluid';
+                            img.onload  = function(){ body.innerHTML=''; body.appendChild(img); };
+                            img.onerror = function(){ body.innerHTML='<span class="text-muted">Not available</span>'; };
+                            body.innerHTML = '<div class="text-center p-4"><span class="spinner-border"></span></div>';
+                            img.src = url;
+                        }
+
+                        if (isPort) {
+                            pbar.querySelectorAll('button').forEach(function(b){ b.classList.toggle('active', b.dataset.period==='-1d'); });
+                            pbar.onclick = function(ev){
+                                var b = ev.target.closest('button[data-period]');
+                                if (!b) return;
+                                pbar.querySelectorAll('button').forEach(function(x){ x.classList.toggle('active',x===b); });
+                                load(b.dataset.period);
+                            };
+                        }
+                        load(isPort ? '-1d' : '');
+                    });
+                    modal.addEventListener('hidden.bs.modal', function(){
+                        document.getElementById('obsGraphModalBody').innerHTML='';
+                        document.getElementById('obs-modal-period').onclick=null;
+                        _td=null;
+                    });
+                }
+
+                // Alert badge tab
+                document.querySelectorAll('.obs-alert-badge[data-tab]').forEach(function(b){
+                    b.addEventListener('click', function(){
+                        var t = document.querySelector('[data-bs-target="#'+b.dataset.tab+'"]');
+                        if (t) bootstrap.Tab.getOrCreateInstance(t).show();
+                    });
+                });
+            })();
+            </script>
+        </t>
+        <t t-out="obs_js"/>
 
     </t>
 </template>
@@ -720,15 +790,13 @@
             <i t-attf-class="fa {{ gr[2] }} me-2 text-primary"/>
             <t t-esc="gr[1]"/>
         </div>
-        <div class="obs-graph-body" style="position:relative; min-height:80px;">
-            <div class="obs-graph-spinner text-muted small" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)">
-                <span class="spinner-border spinner-border-sm me-2" role="status"/>Loading...
-            </div>
+        <div class="obs-graph-body">
             <img t-attf-src="/my/observium/{{ device.get('device_id') }}/graph/{{ gr[0] }}?period=-6h"
                  t-attf-data-graph="{{ gr[0] }}"
                  t-attf-data-device="{{ device.get('device_id') }}"
                  class="obs-graph-img img-fluid"
-                 style="opacity:0; display:block; width:100%"
+                 style="width:100%; display:block;"
+                 onerror="this.style.display='none'"
                  alt="Graph"/>
         </div>
     </div>
