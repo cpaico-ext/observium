@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+<template id="observium_devices_template" name="Observium: Device List">
+    <t t-call="portal.portal_layout">
+
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/my/home">Home</a></li>
+                <li class="breadcrumb-item active">Network Devices</li>
+            </ol>
+        </nav>
+
+        <!-- Header -->
+        <div class="d-flex align-items-center gap-3 mb-4">
+            <div class="obs-icon-wrap">
+                <i class="fa fa-2x fa-server text-primary"/>
+            </div>
+            <div>
+                <h2 class="mb-0">Network Devices</h2>
+                <p class="text-muted mb-0">
+                    Real-time monitoring from Observium
+                    <t t-if="group_code and is_admin">
+                        — Group <strong t-esc="group_code"/>
+                    </t>
+                </p>
+            </div>
+            <div class="ms-auto">
+                <a href="/my/observium" class="btn btn-outline-secondary btn-sm">
+                    <i class="fa fa-refresh me-1"/>Refresh
+                </a>
+            </div>
+        </div>
+
+        <!-- Error state -->
+        <t t-if="error">
+            <div class="alert alert-danger d-flex gap-3 align-items-start" role="alert">
+                <i class="fa fa-exclamation-triangle fa-2x mt-1 flex-shrink-0"/>
+                <div>
+                    <strong>Connection error</strong>
+                    <p class="mb-0 small" t-esc="error"/>
+                </div>
+            </div>
+        </t>
+
+        <!-- Summary bar -->
+        <t t-if="not error">
+            <div class="obs-summary-bar mb-4">
+                <div class="obs-stat">
+                    <i class="fa fa-server text-primary"/>
+                    <span class="obs-stat-value" t-esc="device_count"/>
+                    <span class="obs-stat-label">Devices</span>
+                </div>
+                <div class="obs-stat">
+                    <i class="fa fa-check-circle text-success"/>
+                    <span class="obs-stat-value">
+                        <t t-esc="len([d for d in devices if str(d.get('status')) == '1'])"/>
+                    </span>
+                    <span class="obs-stat-label">Up</span>
+                </div>
+                <div class="obs-stat">
+                    <i class="fa fa-times-circle text-danger"/>
+                    <span class="obs-stat-value">
+                        <t t-esc="len([d for d in devices if str(d.get('status')) != '1'])"/>
+                    </span>
+                    <span class="obs-stat-label">Down</span>
+                </div>
+            </div>
+        </t>
+
+        <!-- Device cards -->
+        <t t-if="devices">
+            <div class="row g-3">
+                <t t-foreach="devices" t-as="device">
+                    <t t-set="is_up" t-value="str(device.get('status')) == '1'"/>
+                    <div class="col-xl-4 col-lg-6">
+                        <a t-attf-href="/my/observium/{{ device.get('device_id') }}"
+                           class="text-decoration-none">
+                            <div t-attf-class="card h-100 border-1 shadow-sm obs-device-card {{ 'obs-up' if is_up else 'obs-down' }}">
+                                <!-- Status stripe -->
+                                <div t-attf-class="obs-status-stripe {{ 'bg-success' if is_up else 'bg-danger' }}"/>
+
+                                <div class="card-body p-3">
+                                    <!-- Top row: hostname + status badge -->
+                                    <div class="d-flex justify-content-between align-items-start mb-2">
+                                        <div>
+                                            <h6 class="mb-0 fw-bold" t-esc="device.get('hostname', 'Unknown')"/>
+                                            <small class="text-muted" t-esc="device.get('sysName', '')"/>
+                                        </div>
+                                        <span t-attf-class="badge {{ 'bg-success' if is_up else 'bg-danger' }}">
+                                            <i t-attf-class="fa {{ 'fa-check' if is_up else 'fa-times' }} me-1"/>
+                                            <t t-esc="'Up' if is_up else 'Down'"/>
+                                        </span>
+                                    </div>
+
+                                    <!-- Device info grid -->
+                                    <div class="obs-device-info">
+                                        <div class="obs-info-row">
+                                            <i class="fa fa-fw fa-network-wired text-muted"/>
+                                            <code class="small" t-esc="device.get('ip', 'N/A')"/>
+                                        </div>
+                                        <div class="obs-info-row">
+                                            <i class="fa fa-fw fa-cog text-muted"/>
+                                            <span class="small">
+                                                <span class="badge bg-info bg-opacity-5 text-dark border border-dark border-opacity-10"
+                                                      t-esc="device.get('os', 'N/A')"/>
+                                                <t t-if="device.get('type')">
+                                                    <span class="badge bg-secondary bg-opacity-5 text-dark border border-dark border-opacity-10 ms-1"
+                                                          t-esc="device.get('type')"/>
+                                                </t>
+                                            </span>
+                                        </div>
+                                        <t t-if="device.get('location') and device.get('location') != 'Unknown'">
+                                            <div class="obs-info-row">
+                                                <i class="fa fa-fw fa-map-marker text-muted"/>
+                                                <span class="small text-truncate" t-esc="device.get('location')"/>
+                                            </div>
+                                        </t>
+                                        <t t-if="device.get('last_polled')">
+                                            <div class="obs-info-row">
+                                                <i class="fa fa-fw fa-clock-o text-muted"/>
+                                                <span class="small text-muted">
+                                                    Polled: <t t-esc="device.get('last_polled')"/>
+                                                </span>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </a>
+                    </div>
+                </t>
+            </div>
+        </t>
+
+        <!-- Empty state -->
+        <t t-if="not devices and not error">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body text-center py-5">
+                    <i class="fa fa-inbox fa-3x text-muted mb-3"/>
+                    <h4 class="text-muted">No devices found</h4>
+                    <p class="text-muted small">
+                        No monitored devices are assigned to your account.
+                        Contact your administrator if you believe this is an error.
+                    </p>
+                </div>
+            </div>
+        </t>
+
+    </t>
+</template>
+
+</odoo>

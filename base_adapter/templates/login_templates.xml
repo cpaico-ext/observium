@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="hide_login_powered_by_odoo" inherit_id="web.login_layout" name="Hide login Powered by Odoo">
+        <xpath expr="//div[hasclass('card-body')]//div[last()]" position="replace">
+        </xpath>
+    </template>
+    <template id="hide_log_in_as_superuser" inherit_id="web.login" name="Log in as superuser">
+        <xpath expr="//t[@t-if='debug']" position="replace">
+        </xpath>
+    </template>
+</odoo>

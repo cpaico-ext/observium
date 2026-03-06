@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_partner_form_observium" model="ir.ui.view">
+        <field name="name">res.partner.form.observium</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page name="portal_observium" string="Portal">
+                    <group>
+                        <group string="Observium">
+                            <field name="observium_group_code" string="Group code"/>
+                        </group>
+                        <group string="Portal Roles">
+                            <field name="portal_role_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

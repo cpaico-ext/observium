@@ -1,0 +1,454 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* we_portal_base
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-02 21:40+0000\n"
+"PO-Revision-Date: 2026-03-02 21:40+0000\n"
+"Last-Translator: Carlos Enrique Paico Zavala <EnriqueZav96@gmail.com>\n"
+"Language-Team: EnriqueCoDev <EnriqueZav96@gmail.com>\n"
+"Language: es_PE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.portal_my_home_dashboards
+msgid ""
+"<small class=\"text-primary\">\n"
+"                                                <i class=\"fa fa-arrow-right me-1\"/>View dashboard\n"
+"                                            </small>"
+msgstr ""
+"<small class=\"text-primary\">\n"
+"                                                <i class=\"fa fa-arrow-right me-1\"/>Ver tablero\n"
+"                                            </small>"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "<span class=\"o_stat_text text-muted\">Inactive</span>"
+msgstr "<span class=\"o_stat_text text-muted\">Inactivo</span>"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "<span class=\"o_stat_text text-success\">Active</span>"
+msgstr "<span class=\"o_stat_text text-success\">Activo</span>"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.portal_my_home_dashboards
+msgid "<strong>No dashboards assigned</strong>"
+msgstr "<strong>No hay tableros asignados</strong>"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_needaction
+msgid "Action Needed"
+msgstr "Acción requerida"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__active
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__active
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__active
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_search
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_search
+msgid "Active"
+msgstr "Activo"
+
+#. module: we_portal_base
+#: model:res.groups,name:we_portal_base.group_admin
+msgid "Admin"
+msgstr "Administrador"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_search
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_attachment_count
+msgid "Attachment Count"
+msgstr "Número de adjuntos"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_dashboard__url
+msgid "Auto-generated portal URL based on code"
+msgstr "URL del portal generada automáticamente según el código"
+
+#. module: we_portal_base
+#: model_terms:ir.actions.act_window,help:we_portal_base.action_portal_partner_role
+msgid "Click to create a partner role and assign dashboards to clients."
+msgstr "Haga clic para crear un rol de partner y asignar tableros a clientes."
+
+#. module: we_portal_base
+#: model_terms:ir.actions.act_window,help:we_portal_base.action_portal_dashboard_element
+msgid "Click to create your first dashboard element."
+msgstr "Haga clic para crear su primer elemento del tablero."
+
+#. module: we_portal_base
+#: model_terms:ir.actions.act_window,help:we_portal_base.action_portal_dashboard
+msgid "Click to create your first dashboard."
+msgstr "Haga clic para crear su primer tablero."
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__client_id
+msgid "Client"
+msgstr "Cliente"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__code
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__code
+msgid "Code"
+msgstr "Código"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_partner_role__client_id
+msgid "Company or main partner associated with this role"
+msgstr "Empresa o partner principal asociado a este rol"
+
+#. module: we_portal_base
+#: model:ir.ui.menu,name:we_portal_base.menu_portal_config
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.portal_my_home_dashboards
+msgid "Contact your administrator to request access to a dashboard."
+msgstr ""
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__contact_ids
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "Contacts"
+msgstr "Contactos"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__create_uid
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__create_uid
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__create_date
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__create_date
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: we_portal_base
+#: model:ir.ui.menu,name:we_portal_base.menu_portal_dashboard
+msgid "Dashboard"
+msgstr "Tablero"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+msgid "Dashboard element"
+msgstr "Elemento del tablero"
+
+#. module: we_portal_base
+#: model:ir.actions.act_window,name:we_portal_base.action_portal_dashboard_element
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_list
+msgid "Dashboard elements"
+msgstr "Elementos del tablero"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+msgid "Dashboard name..."
+msgstr "Nombre del tablero..."
+
+#. module: we_portal_base
+#. odoo-python
+#: code:addons/we_portal_base/controllers/dashboard.py:0
+msgid "Dashboard not found."
+msgstr "Tablero no encontrado."
+
+#. module: we_portal_base
+#: model:ir.actions.act_window,name:we_portal_base.action_portal_dashboard
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__dashboard_ids
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__dashboard_ids
+#: model:ir.ui.menu,name:we_portal_base.menu_portal_dashboards
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_list
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "Dashboards"
+msgstr "Tableros"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_partner_role__dashboard_ids
+msgid "Dashboards accessible to this role"
+msgstr "Tableros accesibles para este rol"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__description
+msgid "Description"
+msgstr "Descripción"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__display_name
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__display_name
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__element_count
+msgid "Element Count"
+msgstr "Número de elementos"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+msgid "Element name..."
+msgstr "Nombre del elemento..."
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__element_ids
+#: model:ir.ui.menu,name:we_portal_base.menu_portal_dashboard_element
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+msgid "Elements"
+msgstr "Elementos"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Partners)"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_dashboard__icon
+msgid "FontAwesome icon class, e.g. \"fa-eye\""
+msgstr "Clase de icono FontAwesome, ej. \"fa-eye\""
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "Grant Portal Access"
+msgstr "Conceder acceso al portal"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__has_message
+msgid "Has Message"
+msgstr "Tiene mensaje"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__id
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__id
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__id
+msgid "ID"
+msgstr ""
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__icon
+msgid "Icon"
+msgstr "Icono"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_partner_role__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, los nuevos mensajes requieren su atención."
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_partner_role__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_is_follower
+msgid "Is Follower"
+msgstr "Es seguidor"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__write_uid
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__write_uid
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__write_date
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__write_date
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: we_portal_base
+#: model:res.groups,name:we_portal_base.group_manager
+msgid "Manager"
+msgstr "Gerente"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de entrega de mensaje"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.portal_my_home_dashboards
+msgid "My Dashboards"
+msgstr "Mis Tableros"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__name
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__name
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_partner_role__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren acción"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_partner_role__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
+
+#. module: we_portal_base
+#: model:ir.actions.act_window,name:we_portal_base.action_portal_partner_role
+#: model:ir.ui.menu,name:we_portal_base.menu_portal_partner_role
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_list
+msgid "Partner Roles"
+msgstr "Roles de partner"
+
+#. module: we_portal_base
+#: model:ir.ui.menu,name:we_portal_base.menu_portal_root
+msgid "Portal"
+msgstr ""
+
+#. module: we_portal_base
+#: model:res.groups.privilege,name:we_portal_base.res_groups_privilege_portal_base
+msgid "Portal Base"
+msgstr "Base del portal"
+
+#. module: we_portal_base
+#: model:ir.model,name:we_portal_base.model_portal_dashboard
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+msgid "Portal Dashboard"
+msgstr "Tablero del portal"
+
+#. module: we_portal_base
+#: model:ir.model,name:we_portal_base.model_portal_dashboard_element
+msgid "Portal Dashboard Element"
+msgstr "Elemento del tablero del portal"
+
+#. module: we_portal_base
+#: model:ir.model,name:we_portal_base.model_portal_partner_role
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "Portal Partner Role"
+msgstr "Rol de partner del portal"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_partner_role__contact_ids
+msgid "Portal users (contacts) who will see the assigned dashboards"
+msgstr "Usuarios del portal (contactos) que verán los tableros asignados"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "Portal users who will see the assigned dashboards"
+msgstr "Usuarios del portal que verán los tableros asignados"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_dashboard_element__template_id
+msgid "QWeb template to render for this dashboard element"
+msgstr "Plantilla QWeb a renderizar para este elemento del tablero"
+
+#. module: we_portal_base
+#: model:res.groups,name:we_portal_base.group_readonly
+msgid "Readonly"
+msgstr "Solo lectura"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_partner_role_form
+msgid "Role name..."
+msgstr "Nombre del rol..."
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+msgid "Select a QWeb template to render for this element"
+msgstr "Seleccione una plantilla QWeb para renderizar para este elemento"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__sequence
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard_element__template_id
+msgid "Template"
+msgstr "Plantilla"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_dashboard__url
+msgid "URL Path"
+msgstr "Ruta URL"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_dashboard__code
+msgid "Unique identifier used in the URL, e.g. \"network-monitor\""
+msgstr "Identificador único usado en la URL, ej. \"monitor-red\""
+
+#. module: we_portal_base
+#: model:res.groups,name:we_portal_base.group_user
+msgid "User"
+msgstr "Usuario"
+
+#. module: we_portal_base
+#: model:ir.model.fields,field_description:we_portal_base.field_portal_partner_role__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del sitio web"
+
+#. module: we_portal_base
+#: model:ir.model.fields,help:we_portal_base.field_portal_partner_role__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicación del sitio web"
+
+#. module: we_portal_base
+#. odoo-python
+#: code:addons/we_portal_base/controllers/dashboard.py:0
+msgid "You do not have access to this dashboard."
+msgstr "No tiene acceso a este tablero."
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.portal_dashboard_detail
+msgid "breadcrumb"
+msgstr "migaja de pan"
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+msgid "element name..."
+msgstr "nombre del elemento..."
+
+#. module: we_portal_base
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_element_form
+#: model_terms:ir.ui.view,arch_db:we_portal_base.view_portal_dashboard_form
+msgid "fa-eye"
+msgstr ""

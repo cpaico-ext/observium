@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Root menu: Portal -->
+    <menuitem
+        id="menu_portal_root"
+        name="Portal"
+        web_icon="we_portal_base,static/description/icon.png"
+        sequence="10"
+        groups="we_portal_base.group_manager"/>
+
+    <menuitem
+        id="menu_portal_dashboard"
+        name="Dashboard"
+        parent="menu_portal_root"
+        sequence="10"
+        groups="we_portal_base.group_user"/>
+
+    <!-- Configuration submenu (visible only to admin) -->
+    <menuitem
+        id="menu_portal_config"
+        name="Configuration"
+        parent="menu_portal_root"
+        sequence="100"
+        groups="we_portal_base.group_admin"/>
+
+</odoo>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_dashboard_detail" name="Portal: Dashboard Detail">
+        <t t-call="portal.portal_layout">
+            <t t-set="o_portal_fullwidth_alert" t-value="False"/>
+
+            <!-- Breadcrumb -->
+            <t t-set="additional_title" t-value="dashboard.name"/>
+            <div id="portal_dashboard_breadcrumb" t-if="dashboard">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="/my/home" t-esc="'Home'"/>
+                        </li>
+                        <li class="breadcrumb-item active" aria-current="page" t-esc="dashboard.name"/>
+                    </ol>
+                </nav>
+            </div>
+
+            <!-- Dashboard header -->
+            <div class="container-fluid px-0 mt-3">
+                <div class="d-flex align-items-center mb-4 gap-3">
+                    <div class="portal-dashboard-icon-lg">
+                        <t t-if="dashboard.icon_type == 'image' and dashboard.icon_image">
+                            <img t-attf-src="/web/image/portal.dashboard/{{ dashboard.id }}/icon_image"
+                                 class="rounded" style="width:86px;height:86px;object-fit:contain;"/>
+                        </t>
+                        <t t-else="">
+                            <i t-attf-class="fa fa-3x {{ dashboard.icon or 'fa-tachometer' }} text-primary"/>
+                        </t>
+                    </div>
+                    <div>
+                        <h2 class="mb-0" t-esc="dashboard.name"/>
+                        <p t-if="dashboard.description" class="text-muted mb-0" t-esc="dashboard.description"/>
+                    </div>
+                </div>
+
+                <!-- Element -->
+                <t t-if="elements">
+                    <div class="row g-4">
+                        <t t-foreach="elements" t-as="element">
+                            <div class="col-12">
+                                <t t-if="element.template_id">
+                                    <!-- Render the element's associated QWeb template -->
+                                    <t t-call="{{element.template_id.xml_id}}"/>
+                                </t>
+                                <t t-else="">
+                                    <!-- Fallback: element without a template assigned -->
+                                    <div class="card border-0 shadow-sm">
+                                        <div class="card-body text-center py-5">
+                                            <i class="fa fa-puzzle-piece fa-3x text-muted mb-3"/>
+                                            <h5 class="text-muted" t-esc="element.name"/>
+                                            <p class="text-muted small">
+                                                <t t-esc="'No template assigned to this element.'"/>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </t>
+
+                <!-- Empty dashboard -->
+                <t t-else="">
+                    <div class="card border-0 shadow-sm">
+                        <div class="card-body text-center py-5">
+                            <i class="fa fa-inbox fa-3x text-muted mb-3"/>
+                            <h4 class="text-muted">
+                                <t t-esc="'This dashboard has no elements yet.'"/>
+                            </h4>
+                            <p class="text-muted">
+                                <t t-esc="'Contact your administrator to configure this dashboard.'"/>
+                            </p>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+        </t>
+    </template>
+
+</odoo>

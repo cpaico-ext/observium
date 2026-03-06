@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Hereda el template base del dashboard para inyectar el resumen
+        del grupo Observium debajo del nombre y descripción del dashboard.
+        Solo visible cuando el partner tiene observium_group_code configurado.
+    -->
+    <template id="portal_dashboard_detail_observium"
+              name="Portal: Dashboard Detail (Observium group info)"
+              inherit_id="we_portal_base.portal_dashboard_detail">
+
+        <xpath expr="//div[contains(@class,'d-flex') and contains(@class,'align-items-center') and contains(@class,'mb-4') and contains(@class,'gap-3')]"
+               position="after">
+
+            <!-- Resumen del grupo Observium -->
+            <t t-if="group_error">
+                <div class="obs-group-error mb-4">
+                    <i class="fa fa-exclamation-triangle me-2"/>
+                    <span t-esc="group_error"/>
+                </div>
+            </t>
+
+            <t t-if="group_info">
+                <t t-set="id_type" t-value="group_info.get('_id_type', {})"/>
+                <div class="row g-3 mb-4">
+
+                    <!-- Card cliente -->
+                    <div class="col-md-6">
+                        <div class="obs-summary-card h-100">
+                            <div class="obs-summary-card-icon">
+                                <i t-attf-class="fa fa-lg {{ id_type.get('icon', 'fa-id-card') }}"/>
+                            </div>
+                            <div class="obs-summary-card-body">
+                                <span class="obs-summary-card-label">Cliente</span>
+                                <span class="obs-summary-card-title" t-esc="group_info.get('group_name', '')"/>
+                                <t t-if="group_info.get('group_descr')">
+                                    <span class="obs-summary-card-sub">
+                                        <t t-if="id_type.get('label')">
+                                            <t t-esc="id_type.get('label')"/>&#160;
+                                        </t>
+                                        <t t-esc="group_info.get('group_descr')"/>
+                                    </span>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card dispositivos -->
+                    <t t-if="device_stats">
+                        <div class="col-md-6">
+                            <div class="obs-summary-card h-100">
+                                <div class="obs-summary-card-icon obs-summary-card-icon--devices">
+                                    <i class="fa fa-lg fa-server"/>
+                                </div>
+                                <div class="obs-summary-card-body">
+                                    <span class="obs-summary-card-label">Dispositivos</span>
+                                    <span class="obs-summary-card-title">
+                                        <t t-esc="device_stats.get('total', 0)"/> en total
+                                    </span>
+                                    <span class="obs-summary-card-sub">
+                                        <span class="text-success fw-semibold">
+                                            <i class="fa fa-circle me-1" style="font-size:.6rem"/>
+                                            <t t-esc="device_stats.get('up', 0)"/> activos
+                                        </span>
+                                        <span class="mx-1 text-muted">·</span>
+                                        <span class="text-danger fw-semibold">
+                                            <i class="fa fa-circle me-1" style="font-size:.6rem"/>
+                                            <t t-esc="device_stats.get('down', 0)"/> inactivos
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+
+                </div>
+            </t>
+
+        </xpath>
+    </template>
+
+</odoo>

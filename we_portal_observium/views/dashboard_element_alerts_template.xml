@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!--
+        Alerts widget for the main dashboard.
+        Displays a quick summary with a link to /my/observium/alerts.
+        Does not make an API call—it's simply a visual shortcut.
+    -->
+    <template id="dashboard_element_alerts" name="Dashboard Element: Network Alerts">
+
+        <div class="obs-dashboard-element">
+            <div class="d-flex align-items-center gap-3 mb-3">
+                <div class="obs-icon-wrap">
+                    <i class="fa fa-2x fa-bell text-danger"/>
+                </div>
+                <div>
+                    <h5 class="mb-0">Network Alerts</h5>
+                    <p class="text-muted small mb-0">Active alarms from Observium</p>
+                </div>
+                <div class="ms-auto d-flex gap-2">
+                    <a href="/my/observium/alerts?status=failed"
+                       class="btn btn-danger btn-sm">
+                        <i class="fa fa-exclamation-circle me-1"/>Failed
+                    </a>
+                    <a href="/my/observium/alerts?status=delayed"
+                       class="btn btn-outline-secondary btn-sm">
+                        Delayed
+                    </a>
+                </div>
+            </div>
+            <p class="text-muted small mb-0">
+                <i class="fa fa-info-circle me-1"/>
+                View and track active network alarms across all your monitored devices.
+            </p>
+        </div>
+
+    </template>
+
+</odoo>

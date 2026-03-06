@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_observium" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.observium</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Portal Observium" name="we_portal_observium" string="Portal Observium" logo="/we_portal_observium/static/description/icon.png">
+                    <block title="Observium Integration" id="observium_settings">
+
+                        <!-- CONFIGURATION -->
+                        <block title="Configuration">
+                            <div class="row">
+
+                                <!-- GENERAL -->
+                                <div class="col-xl-6 mb-2">
+                                    <div class="o_setting_box p-2 rounded">
+                                        <h6 class="mb-2">
+                                            <i class="fa fa-cog me-1"/>
+                                            General
+                                        </h6>
+
+                                        <div class="row mb-1 align-items-center">
+                                            <label for="observium_enabled" class="col-4 o_light_label"/>
+                                            <div class="col-8 d-flex align-items-center gap-2">
+                                                <field name="observium_enabled" widget="boolean_toggle"/>
+                                                <span class="text-muted small">
+                                                    Disable portal access
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row align-items-center" invisible="not observium_enabled">
+                                            <label for="observium_environment" class="col-4 o_light_label"/>
+                                            <div class="col-8">
+                                                <field name="observium_environment" widget="radio" options="{'horizontal': true}"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ADVANCED -->
+                                <div class="col-xl-6 mb-2" invisible="not observium_enabled">
+                                    <div class="o_setting_box p-2 rounded">
+                                        <h6 class="mb-2">
+                                            <i class="fa fa-sliders me-1"/>
+                                            Advanced
+                                        </h6>
+
+                                        <div class="row mb-1">
+                                            <label for="observium_verify_ssl" class="col-4 o_light_label"/>
+                                            <field name="observium_verify_ssl" class="col-8"/>
+                                        </div>
+
+                                        <div class="row align-items-center">
+                                            <label for="observium_timeout" class="col-4 o_light_label"/>
+                                            <field name="observium_timeout" class="col-3"/>
+                                            <span class="col-auto text-muted small">sec</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </block>
+
+                        <hr class="my-2"/>
+
+                        <!-- ENVIRONMENTS -->
+                        <block title="Environments" invisible="not observium_enabled">
+                            <div class="row">
+
+                                <!-- DEVELOPMENT -->
+                                <div class="col-xl-6 mb-2">
+                                    <div class="o_setting_box p-2 rounded">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <div class="d-flex align-items-center gap-1">
+                                                <i class="fa fa-code text-primary"/>
+                                                <strong class="small">Development</strong>
+                                            </div>
+
+                                            <div class="d-flex gap-1">
+                                                <span class="badge bg-primary small" invisible="observium_environment != 'dev'">
+                                                    ACTIVE
+                                                </span>
+                                                <span class="badge bg-secondary small" invisible="observium_environment == 'dev'">
+                                                    INACTIVE
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-1">
+                                            <label for="observium_dev_url" class="col-4 o_light_label"/>
+                                            <field name="observium_dev_url" class="col-8" readonly="observium_environment != 'dev'"/>
+                                        </div>
+
+                                        <div class="row mb-1">
+                                            <label for="observium_dev_username" class="col-4 o_light_label"/>
+                                            <field name="observium_dev_username" class="col-8" readonly="observium_environment != 'dev'"/>
+                                        </div>
+
+                                        <div class="row">
+                                            <label for="observium_dev_password" class="col-4 o_light_label"/>
+                                            <field name="observium_dev_password" password="True" class="col-8" readonly="observium_environment != 'dev'"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- PRODUCTION -->
+                                <div class="col-xl-6 mb-2">
+                                    <div class="o_setting_box p-2 rounded">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <div class="d-flex align-items-center gap-1">
+                                                <i class="fa fa-server text-danger"/>
+                                                <strong class="small">Production</strong>
+                                            </div>
+                                            <div class="d-flex gap-1">
+                                                <span class="badge bg-danger small" invisible="observium_environment != 'prod'">
+                                                    ACTIVE
+                                                </span>
+                                                <span class="badge bg-secondary small" invisible="observium_environment == 'prod'">
+                                                    INACTIVE
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="alert alert-warning py-1 px-2 small mb-2" invisible="observium_environment != 'prod'">
+                                            Editing production environment
+                                        </div>
+
+                                        <div class="row mb-1">
+                                            <label for="observium_prod_url" class="col-4 o_light_label"/>
+                                            <field name="observium_prod_url" class="col-8" readonly="observium_environment != 'prod'"/>
+                                        </div>
+
+                                        <div class="row mb-1">
+                                            <label for="observium_prod_username" class="col-4 o_light_label"/>
+                                            <field name="observium_prod_username" class="col-8" readonly="observium_environment != 'prod'"/>
+                                        </div>
+
+                                        <div class="row">
+                                            <label for="observium_prod_password" class="col-4 o_light_label"/>
+                                            <field name="observium_prod_password" password="True" class="col-8" readonly="observium_environment != 'prod'"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </block>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action -->    
+    <record id="action_we_portal_observium_settings" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="path">observium-settings</field>
+        <field name="context">{'module': 'we_portal_observium', 'bin_size': False}</field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_we_portal_observium_settings" 
+        name="Settings" 
+        action="action_we_portal_observium_settings" 
+        parent="we_portal_base.menu_portal_config" 
+        groups="base.group_system,we_portal_base.group_admin" 
+        sequence="10"/>
+</odoo>

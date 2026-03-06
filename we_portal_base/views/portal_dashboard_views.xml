@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List view -->
+    <record id="view_portal_dashboard_list" model="ir.ui.view">
+        <field name="name">portal.dashboard.list</field>
+        <field name="model">portal.dashboard</field>
+        <field name="arch" type="xml">
+            <list string="Dashboards">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="code" optional="show"/>
+                <field name="description" optional="show"/>
+                <field name="url" optional="show"/>
+                <field name="element_ids" widget="many2many_tags" optional="show"/>
+                <field name="active" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="view_portal_dashboard_form" model="ir.ui.view">
+        <field name="name">portal.dashboard.form</field>
+        <field name="model">portal.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Portal Dashboard">
+                <header>
+                    <field name="active" invisible="True"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-toggle-on"
+                                invisible="not active">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text text-success">Active</span>
+                            </div>
+                        </button>
+                        <button name="toggle_active"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-toggle-off"
+                                invisible="active">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text text-muted">Inactive</span>
+                            </div>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Dashboard name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code"/>
+                            <field name="icon_type"/>
+                            <field name="icon"
+                                   placeholder="fa-eye"
+                                   invisible="icon_type != 'fa'"/>
+                            <field name="icon_image"
+                                   widget="image"
+                                   invisible="icon_type != 'image'"/>
+                            <field name="sequence" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="url" readonly="1"/>
+                            <field name="description"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Elements" name="elements">
+                            <field name="element_ids">
+                                <list>
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="code"/>
+                                    <field name="template_id"/>
+                                </list>
+                                <form>
+                                    <sheet>
+                                        <div class="oe_title">
+                                            <label for="name"/>
+                                            <h1>
+                                                <field name="name" placeholder="Element name..."/>
+                                            </h1>
+                                        </div>
+                                        <group>
+                                            <group>
+                                                <field name="code"/>
+                                                <field name="sequence" invisible="1"/>
+                                            </group>
+                                            <group>
+                                                <field name="template_id"
+                                                    options="{'no_create': True}"
+                                                    help="Select a QWeb template to render for this element"/>
+                                            </group>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search view -->
+    <record id="view_portal_dashboard_search" model="ir.ui.view">
+        <field name="name">portal.dashboard.search</field>
+        <field name="model">portal.dashboard</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="code"/>
+                <filter string="Active" name="active" domain="[('active','=',True)]"/>
+                <filter string="Archived" name="archived" domain="[('active','=',False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_portal_dashboard" model="ir.actions.act_window">
+        <field name="name">Dashboards</field>
+        <field name="res_model">portal.dashboard</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create your first dashboard.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu item -->
+    <menuitem
+        id="menu_portal_dashboards"
+        name="Dashboards"
+        parent="menu_portal_dashboard"
+        action="action_portal_dashboard"
+        sequence="10"
+        groups="we_portal_base.group_manager"/>
+
+</odoo>

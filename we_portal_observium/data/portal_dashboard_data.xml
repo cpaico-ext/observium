@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Element: Observium devices widget -->
+        <record id="dashboard_element_observium_devices" model="portal.dashboard.element">
+            <field name="name">Observium Devices</field>
+            <field name="code">obs-devices</field>
+            <field name="sequence">10</field>
+            <field name="template_id" ref="we_portal_observium.dashboard_element_observium"/>
+        </record>
+
+        <!-- Element: alerts widget -->
+        <record id="dashboard_element_observium_alerts" model="portal.dashboard.element">
+            <field name="name">Network Alerts</field>
+            <field name="code">obs-alerts</field>
+            <field name="sequence">20</field>
+            <field name="template_id" ref="we_portal_observium.dashboard_element_alerts"/>
+        </record>
+
+        <!-- Element: Subscribed Services Widget -->
+        <record id="element_services" model="portal.dashboard.element">
+            <field name="name">Contracted Services</field>
+            <field name="code">obs-services</field>
+            <field name="sequence">30</field>
+            <field name="template_id" ref="we_portal_observium.dashboard_element_services"/>
+        </record>
+
+        <!-- Dashboard: Observium -->
+        <record id="dashboard_observium" model="portal.dashboard">
+            <field name="name">Observium</field>
+            <field name="code">observium</field>
+            <field name="description">Network monitoring portal</field>
+            <field name="icon">fa-eye</field>
+            <field name="sequence">10</field>
+            <field name="element_ids" eval="[
+                (4, ref('dashboard_element_observium_devices')),
+                (4, ref('dashboard_element_observium_alerts')),
+                (4, ref('element_services')),
+            ]"/>
+        </record>
+
+        <!-- Default role: My Company (ON Empresas) + admin access the Observium dashboard -->
+        <record id="portal_role_observium_default" model="portal.partner.role">
+            <field name="name">Observium Default</field>
+            <field name="client_id" ref="base.main_partner"/>
+            <field name="contact_ids" eval="[(4, ref('base.partner_admin'))]"/>
+            <field name="dashboard_ids" eval="[(4, ref('dashboard_observium'))]"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,214 @@
+/* we_portal_observium — Observium portal styles */
+
+/* Icon wrappers */
+.obs-icon-wrap {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: rgba(var(--bs-primary-rgb), 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.obs-icon-wrap-lg {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(var(--bs-primary-rgb), 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Summary bar */
+.obs-summary-bar {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1rem 1.25rem;
+    background: #f8f9fa;
+    border-radius: 0.75rem;
+    border: 1px solid #e9ecef;
+}
+
+.obs-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.obs-stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.obs-stat-label {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+/* Device cards */
+.obs-device-card {
+    border-radius: 0.75rem;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    overflow: hidden;
+    position: relative;
+}
+
+.obs-device-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+}
+
+.obs-status-stripe {
+    height: 4px;
+    width: 100%;
+}
+
+.obs-device-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-top: 0.5rem;
+}
+
+.obs-info-row {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+/* Progress bars */
+.obs-progress {
+    height: 6px;
+    border-radius: 3px;
+}
+
+/* Graph cards */
+.obs-graph-card {
+    border: 1px solid #e9ecef;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+
+.obs-graph-header {
+    padding: 0.6rem 1rem;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.obs-graph-body {
+    padding: 0.75rem;
+    background: #fff;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.obs-graph-img {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+}
+
+/* System description */
+.obs-sysdescr {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+/* Dashboard element embed */
+.obs-dashboard-element {
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 0.75rem;
+    border: 1px solid #e9ecef;
+}
+
+
+/* Group card in dashboard header */
+/* Summary cards (group info + device stats) */
+.obs-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-left: 4px solid var(--bs-primary);
+    border-radius: .5rem;
+    padding: .85rem 1.1rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+
+.obs-summary-card-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(var(--bs-primary-rgb), 0.08);
+    color: var(--bs-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.obs-summary-card-icon--devices {
+    background: rgba(var(--bs-success-rgb), 0.08);
+    color: var(--bs-success);
+}
+
+.obs-summary-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: .15rem;
+    min-width: 0;
+}
+
+.obs-summary-card-label {
+    font-size: .72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: #6c757d;
+}
+
+.obs-summary-card-title {
+    font-size: .95rem;
+    font-weight: 700;
+    color: #212529;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.obs-summary-card-sub {
+    font-size: .78rem;
+    color: #6c757d;
+}
+
+/* Group error inline */
+.obs-group-error {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    font-size: .82rem;
+    color: #856404;
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: .5rem;
+    padding: .4rem .75rem;
+}

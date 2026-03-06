@@ -1,0 +1,1003 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* we_portal_observium
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-04 20:00+0000\n"
+"PO-Revision-Date: 2026-03-04 20:00+0000\n"
+"Last-Translator: Carlos Enrique Paico Zavala <EnriqueZav96@gmail.com>\n"
+"Language-Team: EnriqueCoDev <EnriqueZav96@gmail.com>\n"
+"Language: es_PE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "\" at this time."
+msgstr "\" en este momento."
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "/ port"
+msgstr "/ puerto"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "24h"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "30d"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "7d"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-area-chart me-1\"/>Graphs"
+msgstr "<i class=\"fa fa-area-chart me-1\"/>Gráficas"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<i class=\"fa fa-area-chart text-primary me-2\"/>Performance Graphs\n"
+"                                <span class=\"text-muted fw-normal small ms-2\">Last 24 hours</span>"
+msgstr ""
+"<i class=\"fa fa-area-chart text-primary me-2\"/>Gráficas de rendimiento\n"
+"                                <span class=\"text-muted fw-normal small ms-2\">Últimas 24 horas</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-arrow-left me-1\"/>Back"
+msgstr "<i class=\"fa fa-arrow-left me-1\"/>Volver"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "<i class=\"fa fa-arrow-left me-1\"/>Devices"
+msgstr "<i class=\"fa fa-arrow-left me-1\"/>Dispositivos"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.services_placeholder_template
+msgid "<i class=\"fa fa-arrow-left me-1\"/>Volver al inicio"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_services
+msgid "<i class=\"fa fa-arrow-right me-1\"/>Ver servicios"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_observium
+msgid "<i class=\"fa fa-arrow-right me-1\"/>View devices"
+msgstr "<i class=\"fa fa-arrow-right me-1\"/>Ver dispositivos"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<i class=\"fa fa-bell me-1\"/>\n"
+"                            Alerts"
+msgstr ""
+"<i class=\"fa fa-bell me-1\"/>\n"
+"                            Alertas"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-bolt text-warning me-2\"/>Voltage"
+msgstr "<i class=\"fa fa-bolt text-warning me-2\"/>Voltaje"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<i class=\"fa fa-check-circle fa-lg\"/>\n"
+"                                <strong>No active alerts on this device</strong>"
+msgstr ""
+"<i class=\"fa fa-check-circle fa-lg\"/>\n"
+"                                <strong>No hay alertas activas en este dispositivo</strong>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<i class=\"fa fa-ethernet me-1\"/>\n"
+"                            Interfaces"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_alerts
+msgid "<i class=\"fa fa-exclamation-circle me-1\"/>Failed"
+msgstr "<i class=\"fa fa-exclamation-circle me-1\"/>Fallidas"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-file-text-o text-primary me-2\"/>System Description"
+msgstr "<i class=\"fa fa-file-text-o text-primary me-2\"/>Descripción del sistema"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-clock-o me-1\"/>Last Polled"
+msgstr "<i class=\"fa fa-fw fa-clock-o me-1\"/>Última consulta"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-code me-1\"/>Kernel"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-exchange me-1\"/>SNMP"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-globe me-1\"/>IP Address"
+msgstr "<i class=\"fa fa-fw fa-globe me-1\"/>Dirección IP"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-hashtag me-1\"/>Device ID"
+msgstr "<i class=\"fa fa-fw fa-hashtag me-1\"/>ID del dispositivo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-linux me-1\"/>OS"
+msgstr "<i class=\"fa fa-fw fa-linux me-1\"/>SO"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-map-marker me-1\"/>Location"
+msgstr "<i class=\"fa fa-fw fa-map-marker me-1\"/>Ubicación"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-microchip me-1\"/>Hardware"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-server me-1\"/>Hostname"
+msgstr "<i class=\"fa fa-fw fa-server me-1\"/>Nombre de host"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-tag me-1\"/>Type"
+msgstr "<i class=\"fa fa-fw fa-tag me-1\"/>Tipo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-fw fa-user me-1\"/>Contact"
+msgstr "<i class=\"fa fa-fw fa-user me-1\"/>Contacto"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-globe text-primary me-2\"/>IP Addresses"
+msgstr "<i class=\"fa fa-globe text-primary me-2\"/>Direcciones IP"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-heartbeat text-primary me-2\"/>Component Status"
+msgstr "<i class=\"fa fa-heartbeat text-primary me-2\"/>Estado de componentes"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_observium
+msgid ""
+"<i class=\"fa fa-info-circle me-1\"/>\n"
+"                Click \"View devices\" to see your monitored network infrastructure,\n"
+"                real-time metrics and performance graphs."
+msgstr ""
+"<i class=\"fa fa-info-circle me-1\"/>\n"
+"                Haga clic en \"Ver dispositivos\" para ver su infraestructura de red monitorizada,\n"
+"                métricas en tiempo real y gráficas de rendimiento."
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_services
+msgid ""
+"<i class=\"fa fa-info-circle me-1\"/>\n"
+"                Consulte sus servicios contratados, fechas de vigencia y estado actual."
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_alerts
+msgid ""
+"<i class=\"fa fa-info-circle me-1\"/>\n"
+"                View and track active network alarms across all your monitored devices."
+msgstr ""
+"<i class=\"fa fa-info-circle me-1\"/>\n"
+"                Vea y realice un seguimiento de las alarmas de red activas en todos sus dispositivos monitoreados."
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-info-circle me-1\"/>Overview"
+msgstr "<i class=\"fa fa-info-circle me-1\"/>Resumen"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-info-circle text-primary me-2\"/>Device Information"
+msgstr ""
+"<i class=\"fa fa-info-circle text-primary me-2\"/>Información del "
+"dispositivo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-microchip me-1 text-muted\"/>CPU Usage"
+msgstr ""
+"<i class=\"fa fa-microchip me-1 text-muted\"/>\n"
+"                                        Uso de CPU"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-plug text-primary me-2\"/>Current"
+msgstr "<i class=\"fa fa-plug text-primary me-2\"/>Corriente"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "<i class=\"fa fa-refresh me-1\"/>Refresh"
+msgstr "<i class=\"fa fa-refresh me-1\"/>Actualizar"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-refresh text-info me-2\"/>Fan Speed"
+msgstr "<i class=\"fa fa-refresh text-info me-2\"/>Velocidad del ventilador"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<i class=\"fa fa-sitemap me-1\"/>\n"
+"                            Neighbours"
+msgstr ""
+"<i class=\"fa fa-sitemap me-1\"/>\n"
+"                            Vecinos"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<i class=\"fa fa-sitemap text-primary me-2\"/>Network Neighbours\n"
+"                                <span class=\"text-muted fw-normal small ms-2\">(CDP/LLDP)</span>"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-tachometer text-primary me-2\"/>Performance"
+msgstr "<i class=\"fa fa-tachometer text-primary me-2\"/>Rendimiento"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<i class=\"fa fa-thermometer-half me-1\"/>\n"
+"                            Sensors"
+msgstr ""
+"<i class=\"fa fa-thermometer-half me-1\"/>\n"
+"                            Sensores"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<i class=\"fa fa-thermometer-half text-danger me-2\"/>Temperature"
+msgstr "<i class=\"fa fa-thermometer-half text-danger me-2\"/>Temperatura"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<small class=\"fw-bold\">\n"
+"                                                    <i class=\"fa fa-hdd-o me-1 text-muted\"/>Storage\n"
+"                                                </small>"
+msgstr ""
+"<small class=\"fw-bold\">\n"
+"                                        <i class=\"fa fa-hdd-o me-1 text-muted\"/>Almacenamiento\n"
+"                                    </small>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid ""
+"<small class=\"text-primary\">\n"
+"                                        <i class=\"fa fa-chart-line me-1\"/>View details &amp; graphs\n"
+"                                    </small>"
+msgstr ""
+"<small class=\"text-primary\">\n"
+"                                        <i class=\"fa fa-chart-line me-1\"/>Ver detalles y gráficas\n"
+"                                    </small>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<span class=\"badge bg-danger bg-opacity-30 text-dark border border-danger "
+"border-opacity-50\">public</span>"
+msgstr ""
+"<span class=\"badge bg-danger bg-opacity-30 text-dark border border-danger "
+"border-opacity-50\">pública</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"badge bg-danger\">down</span>"
+msgstr "<span class=\"badge bg-danger\">inactivo</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<span class=\"badge bg-info bg-opacity-30 text-dark border border-info "
+"border-opacity-50\">loopback</span>"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"badge bg-secondary ms-1\">0</span>"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"badge bg-secondary\">admin-down</span>"
+msgstr "<span class=\"badge bg-secondary\">admin-inactivo</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<span class=\"badge bg-success bg-opacity-30 text-dark border border-success"
+" border-opacity-50\">private</span>"
+msgstr ""
+"<span class=\"badge bg-success bg-opacity-30 text-dark border border-success"
+" border-opacity-50\">privada</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"badge bg-success\">up</span>"
+msgstr "<span class=\"badge bg-success\">activo</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "<span class=\"col-auto ms-2 text-muted\">seconds</span>"
+msgstr "<span class=\"col-auto ms-2 text-muted\">segundos</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid ""
+"<span class=\"fw-bold\">\n"
+"                                    <i class=\"fa fa-ethernet text-primary me-2\"/>Interfaces\n"
+"                                </span>"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"obs-stat-label d-block\">Active alerts</span>"
+msgstr "<span class=\"obs-stat-label d-block\">Alertas activas</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"obs-stat-label d-block\">CPU</span>"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "<span class=\"obs-stat-label d-block\">Devices affected</span>"
+msgstr "<span class=\"obs-stat-label d-block\">Dispositivos afectados</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"obs-stat-label d-block\">Ports up/down</span>"
+msgstr "<span class=\"obs-stat-label d-block\">Puertos activos/inactivos</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"obs-stat-label d-block\">RAM</span>"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "<span class=\"obs-stat-label d-block\">Total alerts</span>"
+msgstr "<span class=\"obs-stat-label d-block\">Total de alertas</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"obs-stat-label d-block\">Uptime</span>"
+msgstr "<span class=\"obs-stat-label d-block\">Tiempo de actividad</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "<span class=\"obs-stat-label\">Devices</span>"
+msgstr "<span class=\"obs-stat-label\">Dispositivos</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "<span class=\"obs-stat-label\">Down</span>"
+msgstr "<span class=\"obs-stat-label\">Inactivos</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "<span class=\"obs-stat-label\">Up</span>"
+msgstr "<span class=\"obs-stat-label\">Activos</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"text-muted fw-normal\">/</span>"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid ""
+"<span class=\"text-muted small\">\n"
+"                                                When disabled, all Observium portal pages will show a connection error.\n"
+"                                            </span>"
+msgstr ""
+"<span class=\"text-muted small\">\n"
+"                                                Cuando esté deshabilitado, todas las páginas del portal de Observium mostrarán un error de conexión.\n"
+"                                            </span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<span class=\"text-muted\">N/A</span>"
+msgstr "<span class=\"text-muted\">N/D</span>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "<strong>Connection error</strong>"
+msgstr "<strong>Error de conexión</strong>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "<strong>Error loading alerts</strong>"
+msgstr "<strong>Error cargando alertas</strong>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "<strong>Error loading device</strong>"
+msgstr "<strong>Error al cargar el dispositivo</strong>"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "Active Alerts"
+msgstr "Alertas activas"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_environment
+msgid "Active Environment"
+msgstr "Entorno activo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_alerts
+msgid "Active alarms from Observium"
+msgstr "Alertas activas de Observium"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Address"
+msgstr "Dirección"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "Advanced"
+msgstr "Avanzado"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Alert"
+msgstr "Alerta"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "Alerts"
+msgstr "Alertas"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "All clear"
+msgstr "Todo en orden"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Class"
+msgstr "Clase"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Component"
+msgstr "Componente"
+
+#. module: we_portal_observium
+#: model:ir.model,name:we_portal_observium.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "Connection parameters for the development / staging Observium server."
+msgstr ""
+"Parámetros de conexión para el servidor de desarrollo/preparación Observium."
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "Connection parameters for the production Observium server."
+msgstr "Parámetros de conexión para el servidor de producción Observium."
+
+#. module: we_portal_observium
+#: model:ir.model,name:we_portal_observium.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: we_portal_observium
+#. odoo-python
+#: code:addons/we_portal_observium/controllers/observium_controller.py:0
+msgid ""
+"Could not connect to the Observium server. Please contact your "
+"administrator."
+msgstr ""
+
+#. module: we_portal_observium
+#. odoo-python
+#: code:addons/we_portal_observium/controllers/observium_controller.py:0
+msgid "Could not load alerts: %s"
+msgstr "No se pudieron cargar las alertas: %s"
+
+#. module: we_portal_observium
+#. odoo-python
+#: code:addons/we_portal_observium/controllers/observium_controller.py:0
+msgid "Could not load device list: %s"
+msgstr "No se pudo cargar la lista de dispositivos: %s"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_alerts
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "Delayed"
+msgstr "Retrasada"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Description"
+msgstr "Descripción"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_dev_password
+msgid "Dev Password"
+msgstr "Contraseña de desarrollo"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_dev_url
+msgid "Dev URL"
+msgstr "URL de desarrollo"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_dev_username
+msgid "Dev User"
+msgstr "Usuario de desarrollo"
+
+#. module: we_portal_observium
+#: model:ir.model.fields.selection,name:we_portal_observium.selection__res_config_settings__observium_environment__dev
+msgid "Development"
+msgstr "Desarrollo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "Development Environment"
+msgstr "Entorno de desarrollo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "Device"
+msgstr "Dispositivo"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_observium_service__display_name
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__display_name
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_partner__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_enabled
+msgid "Enable Observium Integration"
+msgstr "Habilitar integración con Observium"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "Enable the Observium integration and choose the active environment."
+msgstr "Habilite la integración con Observium y seleccione el entorno activo."
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Entity"
+msgstr "Entidad"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.services_placeholder_template
+msgid "Esta sección está en desarrollo."
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "Failed"
+msgstr "Fallida"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "GB)"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_services
+msgid "Gestión de servicios"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Graphs"
+msgstr "Gráficas"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.view_res_partner_form_observium
+msgid "Group code"
+msgstr "Código de grupo"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,help:we_portal_observium.field_res_partner__observium_group_code
+#: model:ir.model.fields,help:we_portal_observium.field_res_users__observium_group_code
+msgid "Group code in Observium used to filter devices for this client."
+msgstr ""
+"Código de grupo en Observium utilizado para filtrar dispositivos para este "
+"cliente."
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "Home"
+msgstr "Inicio"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_observium_service__id
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__id
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_partner__id
+msgid "ID"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "Integration"
+msgstr "Integración"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Interface"
+msgstr "Interfaz"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Limits (warn/alert)"
+msgstr "Límites (advertencia/alerta)"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Loading graph..."
+msgstr "Cargando gráfica..."
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Local Port"
+msgstr "Puerto local"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Network"
+msgstr "Red"
+
+#. module: we_portal_observium
+#: model:portal.dashboard.element,name:we_portal_observium.dashboard_element_observium_alerts
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_alerts
+msgid "Network Alerts"
+msgstr "Alertas de red"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "Network Devices"
+msgstr "Dispositivos de red"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_observium
+msgid "Network Monitoring"
+msgstr "Monitorización de red"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "Network monitoring alarms from Observium"
+msgstr "Alarmas de monitorización de red de Observium"
+
+#. module: we_portal_observium
+#: model:portal.dashboard,description:we_portal_observium.dashboard_observium
+msgid "Network monitoring portal"
+msgstr "Portal de monitorización de red"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "No alerts with status \""
+msgstr "No hay alertas con estado \""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "No devices found"
+msgstr "No se encontraron dispositivos"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid ""
+"No monitored devices are assigned to your account.\n"
+"                        Contact your administrator if you believe this is an error."
+msgstr ""
+"No hay dispositivos monitorizados asignados a su cuenta.\n"
+"                        Contacte a su administrador si cree que esto es un error."
+
+#. module: we_portal_observium
+#: model:portal.dashboard,name:we_portal_observium.dashboard_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.view_res_partner_form_observium
+msgid "Observium"
+msgstr ""
+
+#. module: we_portal_observium
+#. odoo-python
+#: code:addons/we_portal_observium/models/observium_service.py:0
+msgid ""
+"Observium (%s) is not fully configured. Please set URL, username and "
+"password in Settings."
+msgstr ""
+"Observium (%s) no está completamente configurado. Por favor, establezca la URL, el nombre de usuario y "
+"la contraseña en Ajustes."
+
+#. module: we_portal_observium
+#: model:ir.model,name:we_portal_observium.model_observium_service
+msgid "Observium API Service"
+msgstr "Servicio API de Observium"
+
+#. module: we_portal_observium
+#. odoo-python
+#: code:addons/we_portal_observium/controllers/observium_controller.py:0
+msgid "Observium API error: %s"
+msgstr "Error de la API de Observium: %s"
+
+#. module: we_portal_observium
+#: model:portal.dashboard.element,name:we_portal_observium.dashboard_element_observium_devices
+msgid "Observium Devices"
+msgstr "Dispositivos Observium"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_partner__observium_group_code
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_users__observium_group_code
+msgid "Observium Group Code"
+msgstr "Código de grupo de Observium"
+
+#. module: we_portal_observium
+#. odoo-python
+#: code:addons/we_portal_observium/models/observium_service.py:0
+msgid "Observium integration is disabled. Please enable it in Settings."
+msgstr "La integración con Observium está deshabilitada. Por favor, actívela en Ajustes."
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Platform"
+msgstr "Plataforma"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "Polled:"
+msgstr "Consultado:"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.view_res_partner_form_observium
+msgid "Portal"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "Portal Observium"
+msgstr ""
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_partner__portal_role_ids
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_users__portal_role_ids
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.view_res_partner_form_observium
+msgid "Portal Roles"
+msgstr "Roles del portal"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_observium
+msgid "Powered by Observium"
+msgstr "Desarrollado por Observium"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Prefix"
+msgstr "Prefijo"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_prod_password
+msgid "Prod Password"
+msgstr "Contraseña de producción"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_prod_url
+msgid "Prod URL"
+msgstr "URL de producción"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_prod_username
+msgid "Prod User"
+msgstr "Usuario de producción"
+
+#. module: we_portal_observium
+#: model:ir.model.fields.selection,name:we_portal_observium.selection__res_config_settings__observium_environment__prod
+msgid "Production"
+msgstr "Producción"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "Production Environment"
+msgstr "Entorno de producción"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Protocol"
+msgstr "Protocolo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.services_placeholder_template
+msgid "Próximamente"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "Real-time monitoring from Observium"
+msgstr "Monitorización en tiempo real desde Observium"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Remote Host"
+msgstr "Host remoto"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Remote Port"
+msgstr "Puerto remoto"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Sensor"
+msgstr ""
+
+#. module: we_portal_observium
+#: model:portal.dashboard.element,name:we_portal_observium.element_services
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.dashboard_element_services
+msgid "Servicios Contratados"
+msgstr ""
+
+#. module: we_portal_observium
+#: model:ir.actions.act_window,name:we_portal_observium.action_we_portal_observium_settings
+#: model:ir.ui.menu,name:we_portal_observium.menu_we_portal_observium_settings
+msgid "Settings"
+msgstr "Ajustes"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Since"
+msgstr "Desde"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Speed"
+msgstr "Velocidad"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "State"
+msgstr "Estado"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Status"
+msgstr "Estado"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "Suppressed"
+msgstr "Suprimida"
+
+#. module: we_portal_observium
+#. odoo-python
+#: code:addons/we_portal_observium/controllers/observium_controller.py:0
+msgid "The Observium server did not respond in time. Please try again later."
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "These parameters apply to both environments."
+msgstr "Estos parámetros se aplican a ambos entornos."
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_timeout
+msgid "Timeout (seconds)"
+msgstr "Tiempo de espera (segundos)"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Traffic graph"
+msgstr "Gráfica de tráfico"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Type"
+msgstr "Tipo"
+
+#. module: we_portal_observium
+#. odoo-python
+#: code:addons/we_portal_observium/controllers/observium_controller.py:0
+msgid "Unexpected error: %s"
+msgstr "Error inesperado: %s"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "Value"
+msgstr "Valor"
+
+#. module: we_portal_observium
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_config_settings__observium_verify_ssl
+msgid "Verify SSL Certificate"
+msgstr "Verificar certificado SSL"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+msgid "View on device"
+msgstr "Ver en dispositivo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "active alert(s) on this device"
+msgstr "alerta(s) activa(s) en este dispositivo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "alert(s)"
+msgstr "alerta(s)"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_alerts_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "breadcrumb"
+msgstr "migaja de pan"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "core(s))"
+msgstr "núcleo(s))"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "down"
+msgstr "inactivo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "http://observium-dev.internal"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.res_config_settings_view_form_observium
+msgid "https://observium.company.com"
+msgstr ""
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_device_detail_template
+msgid "up"
+msgstr "activo"
+
+#. module: we_portal_observium
+#: model_terms:ir.ui.view,arch_db:we_portal_observium.observium_devices_template
+msgid "— Group"
+msgstr "— Grupo"

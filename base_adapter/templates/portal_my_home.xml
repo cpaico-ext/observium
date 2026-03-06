@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="portal_my_home_hide_native"
+                  name="Portal: Hide native sections"
+                  inherit_id="portal.portal_my_home"
+                  priority="50">
+
+            <xpath expr="//div[hasclass('o_portal_docs')]" position="replace">
+                <t t-if="request.env.user._is_admin()">
+                    <div class="o_portal_docs">
+                        <t t-call="portal.portal_docs_entry"/>
+                    </div>
+                </t>
+            </xpath>
+
+        </template>
+
+    </data>
+</odoo>
