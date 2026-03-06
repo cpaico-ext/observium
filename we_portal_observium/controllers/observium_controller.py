@@ -10,6 +10,10 @@ from odoo.http import request, Response
 
 _logger = logging.getLogger(__name__)
 
+# Users that belong to this group are considered "internal admins".
+# Portal users (base.group_portal) are always filtered by group_code.
+_ADMIN_GROUP = 'base.group_system'
+
 
 class ObserviumPortalController(http.Controller):
 
@@ -17,48 +21,96 @@ class ObserviumPortalController(http.Controller):
     # Helpers
     # ------------------------------------------------------------------
 
+    def _is_portal_user(self):
+        """True when the current user is a portal-only user (not an internal employee)."""
+        return request.env.user.has_group('base.group_portal')
+
     def _get_partner_group_code(self):
         """
-        Returns the Observium group code for the current user.
-        Checks direct partner field first, then falls back to role's client.
-        Centralised here so both controllers share the same logic.
+        Returns (group_code, is_portal) for the current user.
+
+        Resolution order:
+          1. partner.observium_group_code
+          2. partner.parent_id.observium_group_code  (contact under a company)
+          3. portal.partner.role → client.observium_group_code  (role-based fallback)
+
+        Returns (str|None, bool):
+          - group_code: the Observium group ID or None
+          - is_portal: True if the user is a portal user (no admin bypass)
         """
-        partner = request.env.user.partner_id
-        # Direct code on the partner (or its parent company)
-        code = partner.observium_group_code or (
-            partner.parent_id.observium_group_code if partner.parent_id else None
+        is_portal = self._is_portal_user()
+        partner   = request.env.user.partner_id
+
+        code = (
+            partner.observium_group_code
+            or (partner.parent_id.observium_group_code if partner.parent_id else None)
         )
-        if code:
-            return code
-        # Fallback: look it up through the assigned portal role
-        role = request.env['portal.partner.role'].sudo().search([
-            '|',
-            ('contact_ids', 'in', partner.id),
-            ('client_id', '=', partner.id),
-        ], limit=1)
-        if role:
-            return role.client_id.observium_group_code or None
-        return None
+        if not code:
+            role = request.env['portal.partner.role'].sudo().search([
+                '|',
+                ('contact_ids', 'in', partner.id),
+                ('client_id',   '=',  partner.id),
+            ], limit=1)
+            if role:
+                code = role.client_id.observium_group_code or None
+
+        return code, is_portal
 
     def _observium(self):
         return request.env['observium.service'].sudo()
 
-    def _check_device_access(self, device_id, group_code):
-        """Return True if device_id belongs to the partner's group."""
-        if not group_code:
-            return True
-        try:
-            devices = self._observium().get_devices(group=group_code)
-            allowed_ids = {str(d.get('device_id')) for d in devices}
-            return str(device_id) in allowed_ids
-        except Exception:
-            return False
+    def _resolve_access(self, device_id=None):
+        """
+        Central access-resolution method.
+
+        Returns a dict with:
+          - group_code (str|None)
+          - is_portal  (bool)
+          - identity_error (str|None) — set when a portal user has no group_code
+
+        When device_id is provided and the user has a group_code, also returns:
+          - device (dict|None) — already-fetched device data (zero extra API calls)
+
+        Raises Forbidden if the device is not accessible to the user's group.
+        """
+        group_code, is_portal = self._get_partner_group_code()
+
+        # Portal user with no configured group → identity error (not a hard 403,
+        # we want to show a helpful message instead of a blank error page).
+        if is_portal and not group_code:
+            return {
+                'group_code':      None,
+                'is_portal':       True,
+                'identity_error':  _(
+                    'Your account has not been linked to a monitoring group yet. '
+                    'Please contact your administrator.'
+                ),
+                'device':          None,
+            }
+
+        result = {
+            'group_code':     group_code,
+            'is_portal':      is_portal,
+            'identity_error': None,
+            'device':         None,
+        }
+
+        if device_id is not None:
+            # Admin without a group_code → unrestricted, fetch normally.
+            # Admin/portal with group_code → verify membership AND fetch in one call.
+            device = self._observium().get_device_for_group(device_id, group_code)
+            if device is None and group_code:
+                # Device doesn't exist OR not in the user's group → 403
+                # (we intentionally don't distinguish the two to avoid enumeration)
+                raise Forbidden()
+            result['device'] = device
+
+        return result
 
     def _safe_fetch(self, fn, *args, label='data', **kwargs):
         """
-        Executes fn(*args, **kwargs).
-        Returns (result, None) on success or ([], error_message) on failure.
-        Supplementary data must not break the page.
+        Call fn(*args, **kwargs) without letting it crash the page.
+        Returns (result, None) on success or ([], error_string) on failure.
         """
         try:
             return fn(*args, **kwargs), None
@@ -72,11 +124,29 @@ class ObserviumPortalController(http.Controller):
 
     @http.route('/my/observium', type='http', auth='user', website=True)
     def device_list(self, **kw):
-        group_code = self._get_partner_group_code()
+        group_code, is_portal = self._get_partner_group_code()
+
+        # Portal user with no group configured → show identity error page
+        if is_portal and not group_code:
+            return request.render('we_portal_observium.observium_devices_template', {
+                'devices':      [],
+                'device_count': 0,
+                'group_code':   None,
+                'is_admin':     False,
+                'error':        None,
+                'identity_error': _(
+                    'Your account has not been linked to a monitoring group yet. '
+                    'Please contact your administrator.'
+                ),
+                'page_name': 'observium_devices',
+            })
+
         devices = []
-        error = None
+        error   = None
         try:
-            devices = self._observium().get_devices(group=group_code)
+            # Admin without group_code → no filter (all devices)
+            # Everyone else          → filtered by group
+            devices = self._observium().get_devices(group=group_code or None)
         except ValueError as e:
             error = str(e)
             _logger.warning('Observium not configured: %s', e)
@@ -93,14 +163,14 @@ class ObserviumPortalController(http.Controller):
             error = _('Unexpected error: %s') % str(e)
             _logger.exception('Observium unexpected error')
 
-        is_admin = not request.env.user.has_group('base.group_portal')
         values = {
-            'devices': devices,
-            'device_count': len(devices),
-            'group_code': group_code,
-            'is_admin': is_admin,
-            'error': error,
-            'page_name': 'observium_devices',
+            'devices':        devices,
+            'device_count':   len(devices),
+            'group_code':     group_code,
+            'is_admin':       not is_portal,
+            'error':          error,
+            'identity_error': None,
+            'page_name':      'observium_devices',
         }
         return request.render('we_portal_observium.observium_devices_template', values)
 
@@ -110,26 +180,34 @@ class ObserviumPortalController(http.Controller):
 
     @http.route('/my/observium/<string:device_id>', type='http', auth='user', website=True)
     def device_detail(self, device_id, **kw):
-        group_code = self._get_partner_group_code()
+        # _resolve_access handles: identity error, access check, AND device fetch
+        # — all in a single Observium API call when group_code is set.
+        access = self._resolve_access(device_id=device_id)
 
-        if not self._check_device_access(device_id, group_code):
-            raise Forbidden()
+        if access['identity_error']:
+            return request.render('we_portal_observium.observium_devices_template', {
+                'devices': [], 'device_count': 0, 'group_code': None,
+                'is_admin': False, 'error': None,
+                'identity_error': access['identity_error'],
+                'page_name': 'observium_devices',
+            })
 
-        svc = self._observium()
-        device = None
-        error = None
+        svc    = self._observium()
+        device = access['device']
+        error  = None
 
-        try:
-            device = svc.get_device(device_id)
-            if not device:
-                raise NotFound()
-        except (NotFound, Forbidden):
-            raise
-        except ValueError as e:
-            error = str(e)
-        except Exception as e:
-            error = _('Unexpected error: %s') % str(e)
-            _logger.exception('Observium device detail error')
+        # Admin without group_code: device wasn't fetched yet by _resolve_access
+        if device is None and not access['group_code']:
+            try:
+                device = svc.get_device(device_id)
+                if not device:
+                    raise NotFound()
+            except (NotFound, Forbidden):
+                raise
+            except Exception as e:
+                error = _('Unexpected error: %s') % str(e)
+                _logger.exception('Observium device detail error')
+
 
         warnings = {}
         addresses,  warnings['addresses']  = self._safe_fetch(svc.get_device_addresses,  device_id, label='addresses')
@@ -232,34 +310,35 @@ class ObserviumPortalController(http.Controller):
 
     # ------------------------------------------------------------------
     # Device graphs  /my/observium/<device_id>/graph/<graph_type>
+    # Access check reuses _resolve_access (one combined API call).
     # ------------------------------------------------------------------
 
     @http.route('/my/observium/<string:device_id>/graph/<string:graph_type>',
                 type='http', auth='user', website=True)
     def device_graph(self, device_id, graph_type, period='-1d', **kw):
-        if not self._check_device_access(device_id, self._get_partner_group_code()):
-            raise Forbidden()
-
         allowed_types = {
             'device_ucd_cpu', 'device_mempool', 'device_bits', 'device_ping',
             'device_uptime', 'device_storage', 'device_netstats_bits',
         }
         if graph_type not in allowed_types:
             raise NotFound()
+
+        # _resolve_access raises Forbidden if the device is not accessible.
+        # We don't need the returned device data here, just the access gate.
+        self._resolve_access(device_id=device_id)
+
         try:
             image_bytes, content_type = self._observium().get_graph_image(
                 device_id, graph_type, period=period)
         except requests.exceptions.RequestException as e:
             _logger.error('Observium graph fetch error: %s', e)
             raise NotFound()
-        # FIX #6 — increase cache to match Observium's 5-minute poll cycle
         return Response(image_bytes, content_type=content_type,
                         headers={'Cache-Control': 'private, max-age=300'})
 
     # ------------------------------------------------------------------
     # Port graphs  /my/observium/<device_id>/port/<port_id>/graph/<graph_type>
-    # FIX #8 — device_id is now part of the URL so we reuse _check_device_access
-    # instead of fetching all ports to find the parent device.
+    # device_id in URL → reuse device-level access gate, no port enumeration.
     # ------------------------------------------------------------------
 
     @http.route('/my/observium/<string:device_id>/port/<string:port_id>/graph/<string:graph_type>',
@@ -269,10 +348,7 @@ class ObserviumPortalController(http.Controller):
         if graph_type not in allowed_types:
             raise NotFound()
 
-        # Security: reuse device-level access check — no need to fetch all ports
-        group_code = self._get_partner_group_code()
-        if not self._check_device_access(device_id, group_code):
-            raise Forbidden()
+        self._resolve_access(device_id=device_id)
 
         try:
             image_bytes, content_type = self._observium().get_port_graph_image(
@@ -289,10 +365,22 @@ class ObserviumPortalController(http.Controller):
 
     @http.route('/my/observium/alerts', type='http', auth='user', website=True)
     def alert_list(self, status='failed', **kw):
-        group_code = self._get_partner_group_code()
-        svc = self._observium()
+        group_code, is_portal = self._get_partner_group_code()
+        svc    = self._observium()
         alerts = []
-        error = None
+        error  = None
+
+        # Portal user without group → identity error
+        if is_portal and not group_code:
+            return request.render('we_portal_observium.observium_alerts_template', {
+                'alerts': [], 'alert_count': 0, 'status': status,
+                'error': None,
+                'identity_error': _(
+                    'Your account has not been linked to a monitoring group yet. '
+                    'Please contact your administrator.'
+                ),
+                'page_name': 'observium_alerts',
+            })
 
         allowed_device_ids = None
         if group_code:
@@ -314,11 +402,12 @@ class ObserviumPortalController(http.Controller):
             _logger.exception('Alert list error')
 
         values = {
-            'alerts':      alerts,
-            'alert_count': len(alerts),
-            'status':      status,
-            'error':       error,
-            'page_name':   'observium_alerts',
+            'alerts':         alerts,
+            'alert_count':    len(alerts),
+            'status':         status,
+            'error':          error,
+            'identity_error': None,
+            'page_name':      'observium_alerts',
         }
         return request.render('we_portal_observium.observium_alerts_template', values)
 

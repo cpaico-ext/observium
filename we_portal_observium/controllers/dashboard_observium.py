@@ -29,16 +29,11 @@ class ObserviumDashboardController(DashboardController):
     def _get_observium_group_info(self):
         """
         Returns (group_info, device_stats, group_error).
-        - No code        → (None, None, None)
-        - API error      → (None, None, message)
-        - OK             → (dict_group, dict_stats, None)
+        Delegates group_code resolution to ObserviumPortalController to keep logic DRY.
         """
-        # FIX #16: reuse the centralised helper from ObserviumPortalController
-        partner = request.env.user.partner_id
-        group_code = (
-            partner.observium_group_code
-            or (partner.parent_id.observium_group_code if partner.parent_id else None)
-        )
+        from odoo.addons.we_portal_observium.controllers.observium_controller import ObserviumPortalController
+        group_code, is_portal = ObserviumPortalController()._get_partner_group_code()
+
         if not group_code:
             return None, None, None
 

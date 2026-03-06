@@ -44,6 +44,17 @@
             </div>
         </t>
 
+        <!-- Identity not configured (portal user without group_code) -->
+        <t t-if="identity_error">
+            <div class="alert alert-warning d-flex gap-3 align-items-start" role="alert">
+                <i class="fa fa-id-card-o fa-2x mt-1 flex-shrink-0"/>
+                <div>
+                    <strong>Account not linked</strong>
+                    <p class="mb-0 small" t-esc="identity_error"/>
+                </div>
+            </div>
+        </t>
+
         <!-- Summary bar -->
         <t t-if="not error">
             <div class="obs-summary-bar mb-4">

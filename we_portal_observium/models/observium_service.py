@@ -116,13 +116,12 @@ class ObserviumService(models.AbstractModel):
     @api.model
     def get_device(self, device_id):
         """
-        FIX #2: Use the direct /devices/<id> endpoint instead of fetching
-        all devices and filtering in Python. This is significantly faster
-        on large Observium installations.
+        Fetch a single device by ID using the direct /devices/<id> endpoint.
+        Returns None if the device does not exist (404).
+        Does NOT enforce group membership — use get_device_for_group() for that.
         """
         try:
             data = self._get('devices/{}'.format(device_id))
-            # Observium returns {"status": "ok", "device": {...}} for single-device requests
             device = data.get('device') or data.get('devices', {}).get(str(device_id))
             if device:
                 device.setdefault('device_id', str(device_id))
@@ -131,6 +130,39 @@ class ObserviumService(models.AbstractModel):
             if e.response is not None and e.response.status_code == 404:
                 return None
             raise
+
+    @api.model
+    def get_device_for_group(self, device_id, group_code):
+        """
+        Fetch a single device AND verify it belongs to group_code in one API call.
+
+        Uses GET /api/v0/devices?group=<group>&device_id=<id>
+        Observium returns count=0 when the device is not in the group,
+        so this simultaneously handles access control and data retrieval.
+
+        Returns:
+            dict  — device data if found and accessible
+            None  — device does not exist or is not in the group (caller raises 403/404)
+
+        When group_code is None (admin without a group restriction) it falls
+        back to get_device() so admins always see all devices.
+        """
+        if not group_code:
+            return self.get_device(device_id)
+
+        data = self._get('devices', params={'group': group_code, 'device_id': device_id})
+        devices_raw = data.get('devices', {})
+        if not devices_raw:
+            return None
+
+        if isinstance(devices_raw, dict):
+            device = devices_raw.get(str(device_id))
+        else:
+            device = devices_raw[0] if devices_raw else None
+
+        if device:
+            device.setdefault('device_id', str(device_id))
+        return device
 
     @api.model
     def get_device_addresses(self, device_id):
