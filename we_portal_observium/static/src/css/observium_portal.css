@@ -13,7 +13,7 @@
     border-radius: .75rem .75rem 0 0;
     padding: 1rem 1.25rem;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 1rem;
     flex-wrap: wrap;
@@ -22,7 +22,7 @@
     display: flex; align-items: flex-start; gap: .85rem; flex: 1; min-width: 0;
 }
 .obs-banner-icon {
-    width: 52px; height: 52px; border-radius: 50%;
+    width: 48px; height: 48px; border-radius: 50%;
     background: rgba(255,255,255,.1);
     display: flex; align-items: center; justify-content: center; flex-shrink: 0;
 }
@@ -32,23 +32,43 @@
 }
 /* 4 mini header graphs */
 .obs-banner-graphs {
-    display: flex; gap: .75rem; flex-shrink: 0; flex-wrap: wrap;
+    display: flex; gap: .6rem; flex-wrap: wrap;
     justify-content: flex-end;
+    align-items: flex-start;
 }
 .obs-mini-graph-wrap {
-    text-align: center;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: .5rem;
+    padding: .4rem .5rem;
+    min-width: 130px;
+    flex: 1 1 130px;
+    max-width: 160px;
 }
 .obs-mini-graph-label {
-    font-size: .7rem; color: rgba(255,255,255,.6);
-    text-transform: uppercase; letter-spacing: .04em; margin-bottom: .25rem;
+    font-size: .68rem; color: rgba(255,255,255,.7);
+    text-transform: uppercase; letter-spacing: .05em;
+    margin-bottom: .3rem;
+    display: flex; align-items: center; gap: .25rem;
 }
 .obs-mini-graph-img-wrap {
-    width: 140px; height: 44px;
-    background: rgba(0,0,0,.25); border-radius: .35rem;
-    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    width: 100%; height: 48px;
+    background: rgba(255,255,255,.92);
+    border-radius: .3rem;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
 }
-.obs-mini-spinner { color: rgba(255,255,255,.4); }
-.obs-mini-graph-img { width: 140px; height: 44px; object-fit: cover; }
+.obs-mini-spinner { color: rgba(100,120,160,.6); font-size: .7rem; }
+.obs-mini-graph-img { width: 100%; height: 48px; object-fit: cover; display: block; }
+
+/* Mobile: stack identity + graphs vertically */
+@media (max-width: 768px) {
+    .obs-device-banner { flex-direction: column; }
+    .obs-banner-graphs { width: 100%; justify-content: flex-start; }
+    .obs-mini-graph-wrap { min-width: 110px; max-width: calc(50% - .3rem); flex: 1 1 110px; }
+    .obs-mini-graph-img-wrap { height: 38px; }
+    .obs-mini-graph-img { height: 38px; }
+}
 
 /* ── Navigation tabs (flush with banner) ────────────────────────── */
 .obs-device-tabs {
