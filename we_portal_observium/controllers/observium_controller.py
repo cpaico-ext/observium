@@ -289,11 +289,24 @@ class ObserviumPortalController(http.Controller):
         }
 
         # Build dynamic graph list from what this device actually has enabled
+        # NOTE: GET /api/v0/devices?group=X&device_id=Y does not return graphs{}.
+        # If empty, fetch the full device individually to get graphs{}.
         device_graphs_raw = device.get('graphs', {}) if device else {}
+        if not device_graphs_raw and device:
+            try:
+                full_device = svc.get_device(device_id)
+                if full_device:
+                    device_graphs_raw = full_device.get('graphs', {})
+                    # Merge graphs into device so template has full data too
+                    device['graphs'] = device_graphs_raw
+            except Exception:
+                pass
+
         enabled_keys = {
             k for k, v in device_graphs_raw.items()
             if isinstance(v, dict) and str(v.get('enabled', '0')) == '1'
         }
+        _logger.info('Observium device %s enabled_keys: %s', device_id, sorted(enabled_keys))
 
         # Order: performance → network → system → sensors
         GROUP_ORDER = ['performance', 'network', 'system', 'sensors']
@@ -323,7 +336,7 @@ class ObserviumPortalController(http.Controller):
         if not header_graphs:
             header_graphs = [(t, l, i) for t, l, i, _ in graph_types[:4]]
 
-        # FIX #10 — Format uptime as human-readable string
+        # Format uptime as human-readable string
         uptime_str = self._format_uptime(device.get('uptime') if device else None)
 
         values = {
