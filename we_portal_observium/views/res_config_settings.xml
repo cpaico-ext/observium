@@ -24,7 +24,7 @@
                                             <label for="observium_enabled" class="col-4 o_light_label"/>
                                             <div class="col-8 d-flex align-items-center gap-2">
                                                 <field name="observium_enabled" widget="boolean_toggle"/>
-                                                <!-- FIX #5: label now matches the field semantics -->
+                                                <!-- label now matches the field semantics -->
                                                 <span class="text-muted small">
                                                     When disabled, all Observium portal pages will show a connection error.
                                                 </span>
