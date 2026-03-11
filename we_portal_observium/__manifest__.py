@@ -43,6 +43,7 @@
         'data/portal_dashboard_data.xml',
     ],
     'demo': [
+        'demo/res_partner_demo_data.xml',
         'demo/portal_demo_data.xml',
     ],
     'post_init_hook': 'post_init_hook',

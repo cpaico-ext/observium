@@ -2,6 +2,10 @@
 <odoo>
     <data>
 
+        <record id="payment.portal_my_home_payment" model="ir.ui.view">
+            <field name="active">False</field>
+        </record>
+
         <template id="portal_my_home_hide_native"
                   name="Portal: Hide native sections"
                   inherit_id="portal.portal_my_home"

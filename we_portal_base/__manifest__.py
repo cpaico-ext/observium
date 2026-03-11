@@ -28,7 +28,6 @@
         'security/security.xml',
         'security/ir.model.access.csv',
         # Views - Backend
-        'views/res_partner.xml',
         'views/menu.xml',
         'views/portal_dashboard_views.xml',
         'views/portal_dashboard_element_views.xml',

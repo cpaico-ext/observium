@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_partner_customer_list" model="ir.ui.view">
+        <field name="name">res.partner.customer.list</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <list string="Customers">
+                <field name="avatar_128" widget="image"
+                       options='{"size": [24, 24], "img_class": "o_avatar rounded"}'
+
+                       width="30" nolabel="1"/>
+                <field name="complete_name" string="Name"/>
+                <field name="l10n_latam_identification_type_id"/>
+                <field name="vat"/>
+                <field name="email" optional="show"/>
+                <field name="phone" class="o_force_ltr" optional="show"/>
+                <field name="street" optional="hide"/>
+                <field name="intranet_code" optional="show"/>
+                <field name="win_business_code" optional="hide"/>
+                <field name="company_id" groups="base.group_multi_company"
+                       readonly="1" optional="hide"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_partner_customer_kanban" model="ir.ui.view">
+        <field name="name">res.partner.customer.kanban</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <kanban string="Customers" class="o_kanban_mobile">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="complete_name"/>
+                <field name="avatar_128"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="vat"/>
+                <field name="l10n_latam_identification_type_id"/>
+                <field name="intranet_code"/>
+                <field name="win_business_code"/>
+                <field name="is_customer"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="o_kanban_card_header d-flex align-items-center gap-2 mb-2">
+                            <widget name="web_ribbon" title="Archived"
+                                    bg_color="bg-danger"
+                                    invisible="active"/>
+                            <img t-att-src="kanban_image('res.partner', 'avatar_128', record.id.raw_value)"
+                                 class="o_avatar rounded-circle"
+                                 style="width:40px;height:40px;object-fit:cover;"/>
+                            <div class="flex-grow-1 min-width-0">
+                                <strong class="d-block text-truncate">
+                                    <field name="complete_name"/>
+                                </strong>
+                                <small class="text-muted">
+                                    <field name="l10n_latam_identification_type_id"/>
+                                    <t t-if="record.vat.raw_value">
+                                        — <field name="vat"/>
+                                    </t>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="o_kanban_card_content">
+                            <t t-if="record.email.raw_value">
+                                <div class="d-flex gap-2 align-items-center mb-1">
+                                    <i class="fa fa-envelope fa-fw text-muted"/>
+                                    <field name="email" class="small text-truncate"/>
+                                </div>
+                            </t>
+                            <t t-if="record.phone.raw_value">
+                                <div class="d-flex gap-2 align-items-center mb-1">
+                                    <i class="fa fa-phone fa-fw text-muted"/>
+                                    <field name="phone" class="small o_force_ltr"/>
+                                </div>
+                            </t>
+                            <t t-if="record.intranet_code.raw_value">
+                                <div class="d-flex gap-2 align-items-center mb-1">
+                                    <i class="fa fa-hashtag fa-fw text-muted"/>
+                                    <span class="small text-muted">Intranet: </span>
+                                    <field name="intranet_code" class="small"/>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_partner_customer_form" model="ir.ui.view">
+        <field name="name">res.partner.customer.form</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form string="Customer">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger"
+                            invisible="active"/>
+
+                    <div class="mb8">
+                        <div class="d-flex gap-3">
+                            <field name="image_1920" widget="contact_image"
+                                   options='{"preview_image": "avatar_128", "size": [130,130], "img_class": "rounded border"}'/>
+                            <field name="avatar_128" invisible="1"/>
+                            <div class="d-flex flex-column flex-grow-1">
+                                <field name="company_type" widget="radio"
+                                       options='{"horizontal": true}'/>
+                                <h1 class="mb-0 w-md-75">
+                                    <field name="name" widget="text"
+                                           options='{"line_breaks": false}'
+                                           class="text-break d-block"
+                                           default_focus="1"
+                                           placeholder="e.g. Empresa S.A.C."
+                                           required="type == 'contact'"/>
+                                </h1>
+                                <div class="d-flex align-items-baseline w-md-50">
+                                    <i class="fa fa-fw me-1 fa-envelope text-primary" title="Email"/>
+                                    <field name="email" class="w-100" widget="email" placeholder="Email"/>
+                                </div>
+                                <div class="d-flex align-items-baseline w-md-50">
+                                    <i class="fa fa-fw me-1 fa-phone text-primary" title="Phone"/>
+                                    <field name="phone" class="w-100" widget="phone" placeholder="Phone"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <group>
+                        <group>
+                            <span class="o_form_label o_td_label">Address</span>
+                            <div class="o_address_format">
+                                <field name="street" placeholder="Street..." class="o_address_street"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street"/>
+                                <field name="city" placeholder="City" class="o_address_city"/>
+                                <field name="state_id" placeholder="State" class="o_address_state"
+                                       options='{"no_open": true, "no_quick_create": true}'
+                                       context="{'country_id': country_id, 'default_country_id': country_id, 'zip': zip}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip"/>
+                                <field name="country_id" placeholder="Country" class="o_address_country"
+                                       options='{"no_open": true, "no_create": true}'/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="l10n_latam_identification_type_id"/>
+                            <field name="vat" placeholder="e.g. 20477472701"/>
+                            <field name="website" widget="url" placeholder="e.g. https://www.empresa.com"/>
+                            <field name="category_id" widget="many2many_tags"
+                                   options='{"color_field": "color"}'
+                                   placeholder="Tags..."/>
+                            <field name="company_id" groups="base.group_multi_company"
+                                   options='{"no_create": true}'/>
+                        </group>
+                    </group>
+
+                    <notebook colspan="4">
+                        <page string="Contacts" name="contact_addresses">
+                            <field name="child_ids" mode="kanban"
+                                   context="{'default_parent_id': id, 'default_street': street, 'default_street2': street2, 'default_city': city, 'default_state_id': state_id, 'default_zip': zip, 'default_country_id': country_id, 'default_type': 'contact'}">
+                                <kanban>
+                                    <field name="color"/>
+                                    <field name="type"/>
+                                    <field name="is_company"/>
+                                    <templates>
+                                        <t t-name="card" class="flex-row">
+                                            <aside class="o_kanban_aside_full">
+                                                <field name="avatar_128" class="o_kanban_image_fill w-100"
+                                                       widget="image"
+                                                       options='{"img_class": "object-fit-cover"}'
+                                                       alt="Contact"
+                                                       invisible="type != 'contact'"/>
+                                                <field name="avatar_128" class="o_kanban_image_fill w-100"
+                                                       widget="image"
+                                                       options='{"img_class": "object-fit-contain p-2"}'
+                                                       alt="Contact"
+                                                       invisible="type == 'contact'"/>
+                                            </aside>
+                                            <main class="ps-2 ps-md-0">
+                                                <field name="name" invisible="not name" class="fw-bold"/>
+                                                <field name="type" invisible="name" class="fw-bold"/>
+                                                <div t-if="record.email.raw_value" class="text-truncate">
+                                                    <i class="fa fa-fw me-1 fa-envelope text-primary"/>
+                                                    <field name="email"/>
+                                                </div>
+                                                <div t-if="record.phone.raw_value">
+                                                    <i class="fa fa-fw me-1 fa-phone text-primary"/>
+                                                    <field name="phone"/>
+                                                </div>
+                                            </main>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </page>
+
+                        <page string="ON Empresas" name="on_empresas">
+                            <group>
+                                <group string="Classification">
+                                    <field name="is_customer"/>
+                                    <field name="intranet_code"/>
+                                    <field name="win_business_code"/>
+                                </group>
+                                <group string="Sales">
+                                    <field name="user_id" widget="many2one_avatar_user"
+                                           domain="[('share', '=', False)]"
+                                           string="Salesperson"/>
+                                    <field name="ref" string="Reference"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <page name="internal_notes" string="Notes">
+                            <field name="comment" placeholder="Internal notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_partner_customer" model="ir.actions.act_window">
+        <field name="name">Customers</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[("is_customer", "=", True)]</field>
+        <field name="context">{"default_is_customer": True}</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_partner_customer_kanban')}),
+            (0, 0, {'view_mode': 'list',   'view_id': ref('view_partner_customer_list')}),
+            (0, 0, {'view_mode': 'form',   'view_id': ref('view_partner_customer_form')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No customers found
+            </p>
+            <p>Create your first customer to get started.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_partner_customer"
+              name="Customers"
+              parent="contacts.menu_contacts"
+              action="action_partner_customer"
+              sequence="2"/>
+
+</odoo>

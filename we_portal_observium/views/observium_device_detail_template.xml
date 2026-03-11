@@ -571,7 +571,14 @@
                                                         <t t-set="s_ev" t-value="sensor.get('sensor_event','')"/>
                                                         <tr>
                                                             <td class="small" t-esc="sensor.get('sensor_descr','')"/>
-                                                            <td class="fw-bold small"><t t-esc="sensor.get('sensor_value','N/A')"/><span class="text-muted fw-normal ms-1" t-esc="sensor.get('sensor_unit','')"/></td>
+                                                            <td class="fw-bold small">
+                                                                <t t-set="sv" t-value="sensor.get('sensor_value','')"/>
+                                                                <t t-if="sv != '' and sv is not None">
+                                                                    <t t-esc="('{:.2f}'.format(int(float(sv)*100)/100.0)) if str(sv).replace('.','',1).replace('-','',1).isdigit() else sv"/>
+                                                                </t>
+                                                                <t t-else="">N/A</t>
+                                                                <span class="text-muted fw-normal ms-1" t-esc="sensor.get('sensor_unit','')"/>
+                                                            </td>
                                                             <td class="small text-muted"><t t-esc="sensor.get('sensor_limit_warn','—')"/>/<t t-esc="sensor.get('sensor_limit','—')"/></td>
                                                             <td><span t-attf-class="badge {{ 'bg-success' if s_ev=='ok' else 'bg-danger' if s_ev=='alert' else 'bg-warning text-dark' if s_ev=='warn' else 'bg-secondary' }}" t-esc="s_ev or 'N/A'"/></td>
                                                         </tr>
@@ -693,7 +700,7 @@
                     </div>
 
 
-                    <!-- TAB: NEIGHBOURS -->
+                    <!-- TAB: NEIGHBOUR -->
                     <div class="tab-pane fade" id="tab-neighbours" t-if="neighbours">
                         <div class="card obs-info-card mt-3">
                             <div class="card-header obs-card-header"><i class="fa fa-sitemap text-primary me-2"/>Network Neighbours <span class="text-muted fw-normal small ms-2">(CDP/LLDP)</span></div>
@@ -745,7 +752,67 @@
             <t t-set="obs_js">
                 <script>
                 (function () {
-                    // Period selector — Graphs tab
+
+                    // ── Observium error-image detector ───────────────────────────
+                    // Observium returns a pale-pink image when RRD data is missing.
+                    // Valid "red" graphs are saturated with axes/text/legend pixels.
+                    // We sample the image centre via Canvas and count pale-pink pixels.
+                    var _OBS_ERR_SVG = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="100"><rect width="400" height="100" fill="%23f8f9fa" rx="6"/><text x="200" y="44" font-family="sans-serif" font-size="13" fill="%236c757d" text-anchor="middle">&#9888; Graph not available</text><text x="200" y="66" font-family="sans-serif" font-size="11" fill="%23adb5bd" text-anchor="middle">No data collected for this metric</text></svg>';
+
+                    function obsIsErrorImage(img) {
+                        if (!img.naturalWidth || !img.naturalHeight) return false;
+                        try {
+                            var cv = document.createElement('canvas');
+                            var sz = 40;
+                            cv.width = sz; cv.height = sz;
+                            var ctx = cv.getContext('2d');
+                            var sx = Math.max(0, (img.naturalWidth  - sz) / 2);
+                            var sy = Math.max(0, (img.naturalHeight - sz) / 2);
+                            ctx.drawImage(img, sx, sy, sz, sz, 0, 0, sz, sz);
+                            var data = ctx.getImageData(0, 0, sz, sz).data;
+                            var palePink = 0, total = sz * sz;
+                            for (var i = 0; i &lt; data.length; i += 4) {
+                                var r = data[i], g = data[i+1], b = data[i+2];
+                                // Pale pink: high red, lowish green+blue that are similar to each other
+                                if (r > 210 &amp;&amp; g &lt; 175 &amp;&amp; b &lt; 175 &amp;&amp; Math.abs(g - b) &lt; 40) {
+                                    palePink++;
+                                }
+                            }
+                            // More than 40% pale pink pixels = error image
+                            return (palePink / total) &gt; 0.40;
+                        } catch(e) {
+                            return false; // canvas taint / cross-origin
+                        }
+                    }
+
+                    function obsHandleImg(img) {
+                        if (obsIsErrorImage(img)) {
+                            img.src = _OBS_ERR_SVG;
+                            img.style.opacity = '0.75';
+                            img.title = 'Graph not available (Observium RRD error)';
+                        }
+                    }
+
+                    function obsWatchImg(img) {
+                        if (img.complete &amp;&amp; img.naturalWidth) {
+                            obsHandleImg(img);
+                        } else {
+                            img.addEventListener('load', function() { obsHandleImg(img); });
+                        }
+                    }
+
+                    // Watch all graph images on page load
+                    document.querySelectorAll('.obs-graph-img, .obs-mini-graph-img').forEach(obsWatchImg);
+
+                    // Re-check when period selectors reload images (capture phase)
+                    document.addEventListener('load', function(e) {
+                        var cl = e.target &amp;&amp; e.target.classList;
+                        if (cl &amp;&amp; (cl.contains('obs-graph-img') || cl.contains('obs-mini-graph-img'))) {
+                            obsHandleImg(e.target);
+                        }
+                    }, true);
+
+                    // ── Period selector — Graphs tab ──────────────────────────────
                     document.addEventListener('click', function (e) {
                         var btn = e.target.closest('#obs-period-selector button[data-period]');
                         if (!btn) return;
@@ -807,7 +874,7 @@
                                     : _td.src;
                                 var img = new Image();
                                 img.className = 'img-fluid';
-                                img.onload  = function(){ body.innerHTML=''; body.appendChild(img); };
+                                img.onload  = function(){ body.innerHTML=''; body.appendChild(img); obsHandleImg(img); };
                                 img.onerror = function(){ body.innerHTML='<span class="text-muted">Not available</span>'; };
                                 body.innerHTML = '<div class="text-center p-4"><span class="spinner-border"></span></div>';
                                 img.src = url;

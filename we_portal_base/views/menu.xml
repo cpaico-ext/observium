@@ -16,6 +16,13 @@
         sequence="10"
         groups="we_portal_base.group_user"/>
 
+    <menuitem
+        id="menu_partner_dashboard"
+        name="Partner"
+        parent="menu_portal_root"
+        sequence="20"
+        groups="we_portal_base.group_user"/>
+
     <!-- Configuration submenu (visible only to admin) -->
     <menuitem
         id="menu_portal_config"

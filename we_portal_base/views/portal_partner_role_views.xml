@@ -124,7 +124,7 @@
     <menuitem
         id="menu_portal_partner_role"
         name="Partner Roles"
-        parent="menu_portal_root"
+        parent="menu_partner_dashboard"
         action="action_portal_partner_role"
         sequence="30"
         groups="we_portal_base.group_manager"/>

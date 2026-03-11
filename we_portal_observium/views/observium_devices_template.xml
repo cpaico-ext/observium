@@ -27,7 +27,7 @@
                 </p>
             </div>
             <div class="ms-auto">
-                <a href="/my/observium" class="btn btn-outline-secondary btn-sm">
+                <a href="/my/observium?refresh=1" class="btn btn-outline-secondary btn-sm">
                     <i class="fa fa-refresh me-1"/>Refresh
                 </a>
             </div>
@@ -44,7 +44,7 @@
             </div>
         </t>
 
-        <!-- Identity not configured (portal user without group_code) -->
+        <!-- Identity not configured -->
         <t t-if="identity_error">
             <div class="alert alert-warning d-flex gap-3 align-items-start" role="alert">
                 <i class="fa fa-id-card-o fa-2x mt-1 flex-shrink-0"/>
@@ -55,28 +55,33 @@
             </div>
         </t>
 
-        <!-- Summary bar -->
-        <t t-if="not error">
-            <div class="obs-summary-bar mb-4">
+        <!-- Summary bar — totals are over ALL devices, not just current page -->
+        <t t-if="not error and device_count">
+            <div class="obs-summary-bar mb-3">
                 <div class="obs-stat">
                     <i class="fa fa-server text-primary"/>
                     <span class="obs-stat-value" t-esc="device_count"/>
-                    <span class="obs-stat-label">Devices</span>
+                    <span class="obs-stat-label">Total</span>
                 </div>
                 <div class="obs-stat">
                     <i class="fa fa-check-circle text-success"/>
-                    <span class="obs-stat-value">
-                        <t t-esc="len([d for d in devices if str(d.get('status')) == '1'])"/>
-                    </span>
+                    <span class="obs-stat-value" t-esc="devices_up_count"/>
                     <span class="obs-stat-label">Up</span>
                 </div>
                 <div class="obs-stat">
                     <i class="fa fa-times-circle text-danger"/>
-                    <span class="obs-stat-value">
-                        <t t-esc="len([d for d in devices if str(d.get('status')) != '1'])"/>
-                    </span>
+                    <span class="obs-stat-value" t-esc="devices_down_count"/>
                     <span class="obs-stat-label">Down</span>
                 </div>
+                <t t-if="total_pages > 1">
+                    <div class="obs-stat ms-auto">
+                        <i class="fa fa-list text-muted"/>
+                        <span class="obs-stat-value small">
+                            <t t-esc="(page - 1) * page_size + 1"/>–<t t-esc="(page - 1) * page_size + len(devices)"/>
+                        </span>
+                        <span class="obs-stat-label">of <t t-esc="device_count"/></span>
+                    </div>
+                </t>
             </div>
         </t>
 
@@ -89,11 +94,8 @@
                         <a t-attf-href="/my/observium/{{ device.get('device_id') }}"
                            class="text-decoration-none">
                             <div t-attf-class="card h-100 border-1 shadow-sm obs-device-card {{ 'obs-up' if is_up else 'obs-down' }}">
-                                <!-- Status stripe -->
                                 <div t-attf-class="obs-status-stripe {{ 'bg-success' if is_up else 'bg-danger' }}"/>
-
                                 <div class="card-body p-3">
-                                    <!-- Top row: hostname + status badge -->
                                     <div class="d-flex justify-content-between align-items-start mb-2">
                                         <div>
                                             <h6 class="mb-0 fw-bold" t-esc="device.get('hostname', 'Unknown')"/>
@@ -104,8 +106,6 @@
                                             <t t-esc="'Up' if is_up else 'Down'"/>
                                         </span>
                                     </div>
-
-                                    <!-- Device info grid -->
                                     <div class="obs-device-info">
                                         <div class="obs-info-row">
                                             <i class="fa fa-fw fa-globe text-muted"/>
@@ -131,19 +131,15 @@
                                         <t t-if="device.get('last_polled')">
                                             <div class="obs-info-row">
                                                 <i class="fa fa-fw fa-clock-o text-muted"/>
-                                                <span class="small text-muted">
-                                                    Polled: <t t-esc="device.get('last_polled')"/>
-                                                </span>
+                                                <span class="small text-muted">Polled: <t t-esc="device.get('last_polled')"/></span>
                                             </div>
                                         </t>
                                     </div>
                                 </div>
-
-                                <!-- CTA footer for clear affordance -->
                                 <t t-if="is_admin">
                                     <div class="card-footer bg-transparent border-top text-center py-2">
                                         <small class="text-primary">
-                                            <i class="fa fa-chart-line me-1"/>View details &amp; graphs
+                                            <i class="fa fa-bar-chart me-1"/>View details &amp; graphs
                                         </small>
                                     </div>
                                 </t>
@@ -152,6 +148,68 @@
                     </div>
                 </t>
             </div>
+
+            <!-- Pagination — only shown if more than one page -->
+            <t t-if="total_pages > 1">
+                <nav class="mt-4" aria-label="Device pages">
+                    <ul class="pagination justify-content-center flex-wrap">
+
+                        <!-- Prev -->
+                        <li t-attf-class="page-item {{ 'disabled' if page == 1 else '' }}">
+                            <a class="page-link" t-attf-href="/my/observium?page={{ page - 1 }}">
+                                <i class="fa fa-chevron-left"/>
+                            </a>
+                        </li>
+
+                        <!-- First page always visible -->
+                        <li t-attf-class="page-item {{ 'active' if page == 1 else '' }}">
+                            <a class="page-link" href="/my/observium?page=1">1</a>
+                        </li>
+
+                        <!-- Left ellipsis -->
+                        <t t-if="page > 4">
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        </t>
+
+                        <!-- Window: pages around current (2 before, 2 after, excluding first/last) -->
+                        <t t-foreach="range(2, total_pages)" t-as="p">
+                            <t t-if="p >= page - 2 and p &lt;= page + 2">
+                                <li t-attf-class="page-item {{ 'active' if p == page else '' }}">
+                                    <a class="page-link" t-attf-href="/my/observium?page={{ p }}">
+                                        <t t-esc="p"/>
+                                    </a>
+                                </li>
+                            </t>
+                        </t>
+
+                        <!-- Right ellipsis -->
+                        <t t-if="page &lt; total_pages - 3">
+                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                        </t>
+
+                        <!-- Last page always visible -->
+                        <t t-if="total_pages > 1">
+                            <li t-attf-class="page-item {{ 'active' if page == total_pages else '' }}">
+                                <a class="page-link" t-attf-href="/my/observium?page={{ total_pages }}">
+                                    <t t-esc="total_pages"/>
+                                </a>
+                            </li>
+                        </t>
+
+                        <!-- Next -->
+                        <li t-attf-class="page-item {{ 'disabled' if page == total_pages else '' }}">
+                            <a class="page-link" t-attf-href="/my/observium?page={{ page + 1 }}">
+                                <i class="fa fa-chevron-right"/>
+                            </a>
+                        </li>
+
+                    </ul>
+                    <p class="text-center text-muted small mt-1">
+                        Page <t t-esc="page"/> of <t t-esc="total_pages"/>
+                        — <t t-esc="device_count"/> devices total
+                    </p>
+                </nav>
+            </t>
         </t>
 
         <!-- Empty state -->

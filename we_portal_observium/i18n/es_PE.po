@@ -634,8 +634,8 @@ msgid "Group code"
 msgstr "Código de grupo"
 
 #. module: we_portal_observium
-#: model:ir.model.fields,help:we_portal_observium.field_res_partner__observium_group_code
-#: model:ir.model.fields,help:we_portal_observium.field_res_users__observium_group_code
+#: model:ir.model.fields,help:we_portal_observium.field_res_partner__observium_code
+#: model:ir.model.fields,help:we_portal_observium.field_res_users__observium_code
 msgid "Group code in Observium used to filter devices for this client."
 msgstr ""
 "Código de grupo en Observium utilizado para filtrar dispositivos para este "
@@ -766,8 +766,8 @@ msgid "Observium Devices"
 msgstr "Dispositivos Observium"
 
 #. module: we_portal_observium
-#: model:ir.model.fields,field_description:we_portal_observium.field_res_partner__observium_group_code
-#: model:ir.model.fields,field_description:we_portal_observium.field_res_users__observium_group_code
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_partner__observium_code
+#: model:ir.model.fields,field_description:we_portal_observium.field_res_users__observium_code
 msgid "Observium Group Code"
 msgstr "Código de grupo de Observium"
 

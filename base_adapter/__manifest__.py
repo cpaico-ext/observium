@@ -19,6 +19,7 @@ core flows while maintaining compatibility with Odoo's standard framework.
     ],
     'depends': [
         'base',
+        'l10n_pe',
         'contacts',
         'portal',
     ],
@@ -29,9 +30,11 @@ core flows while maintaining compatibility with Odoo's standard framework.
         
         'templates/login_templates.xml',
         'templates/portal_my_home.xml',
-        
+
         'views/ir_views.xml',
         'views/ir_module_module_views.xml',
+        
+        'views/res_partner_customer.xml',
     ],
     'demo': [
         'demo/res_partner_data.xml',

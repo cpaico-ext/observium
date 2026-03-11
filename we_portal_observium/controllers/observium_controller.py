@@ -30,9 +30,9 @@ class ObserviumPortalController(http.Controller):
         Returns (group_code, is_portal) for the current user.
 
         Resolution order:
-          1. partner.observium_group_code
-          2. partner.parent_id.observium_group_code  (contact under a company)
-          3. portal.partner.role → client.observium_group_code  (role-based fallback)
+          1. partner.observium_code
+          2. partner.parent_id.observium_code  (contact under a company)
+          3. portal.partner.role → client.observium_code  (role-based fallback)
 
         Returns (str|None, bool):
           - group_code: the Observium group ID or None
@@ -42,8 +42,8 @@ class ObserviumPortalController(http.Controller):
         partner   = request.env.user.partner_id
 
         code = (
-            partner.observium_group_code
-            or (partner.parent_id.observium_group_code if partner.parent_id else None)
+            partner.observium_code
+            or (partner.parent_id.observium_code if partner.parent_id else None)
         )
         if not code:
             role = request.env['portal.partner.role'].sudo().search([
@@ -52,7 +52,7 @@ class ObserviumPortalController(http.Controller):
                 ('client_id',   '=',  partner.id),
             ], limit=1)
             if role:
-                code = role.client_id.observium_group_code or None
+                code = role.client_id.observium_code or None
 
         return code, is_portal
 
@@ -115,56 +115,84 @@ class ObserviumPortalController(http.Controller):
     # ------------------------------------------------------------------
     # Device List  /my/observium
     # ------------------------------------------------------------------
+    
+    # odoo modules template
+    _DEVICES_PAGE_SIZE = 10  # devices per page
 
     @http.route('/my/observium', type='http', auth='user', website=True)
-    def device_list(self, **kw):
+    def device_list(self, page=1, refresh=0, **kw):
         group_code, is_portal = self._get_partner_group_code()
 
         # Portal user with no group configured → show identity error page
         if is_portal and not group_code:
             return request.render('we_portal_observium.observium_devices_template', {
-                'devices':      [],
-                'device_count': 0,
-                'group_code':   None,
-                'is_admin':     False,
-                'error':        None,
+                'devices': [], 'device_count': 0, 'group_code': None,
+                'is_admin': False, 'error': None,
                 'identity_error': _(
                     'Your account has not been linked to a monitoring group yet. '
                     'Please contact your administrator.'
                 ),
                 'page_name': 'observium_devices',
+                'page': 1, 'total_pages': 1, 'page_size': self._DEVICES_PAGE_SIZE,
             })
 
-        devices = []
-        error   = None
-        try:
-            # Admin without group_code → no filter (all devices)
-            # Everyone else          → filtered by group
-            devices = self._observium().get_devices(group=group_code or None)
-        except ValueError as e:
-            error = str(e)
-            _logger.warning('Observium not configured: %s', e)
-        except requests.exceptions.ConnectionError:
-            error = _('Could not connect to the Observium server. Please contact your administrator.')
-            _logger.error('Observium connection error')
-        except requests.exceptions.Timeout:
-            error = _('The Observium server did not respond in time. Please try again later.')
-            _logger.error('Observium timeout')
-        except requests.exceptions.HTTPError as e:
-            error = _('Observium API error: %s') % str(e)
-            _logger.error('Observium HTTP error: %s', e)
-        except Exception as e:
-            error = _('Unexpected error: %s') % str(e)
-            _logger.exception('Observium unexpected error')
+        # ── Session cache: avoid re-fetching all devices on every page turn ──
+        # Cache key includes group_code so different users don't share lists.
+        session = request.session
+        cache_key   = '_obs_devices_{}'.format(group_code or 'admin')
+        all_devices = None
+
+        if not int(refresh) and cache_key in session:
+            all_devices = session[cache_key]
+
+        if all_devices is None:
+            error = None
+            try:
+                all_devices = self._observium().get_devices(group=group_code or None)
+                session[cache_key] = all_devices
+            except ValueError as e:
+                error = str(e)
+                _logger.warning('Observium not configured: %s', e)
+            except requests.exceptions.ConnectionError:
+                error = _('Could not connect to the Observium server. Please contact your administrator.')
+                _logger.error('Observium connection error')
+            except requests.exceptions.Timeout:
+                error = _('The Observium server did not respond in time. Please try again later.')
+                _logger.error('Observium timeout')
+            except requests.exceptions.HTTPError as e:
+                error = _('Observium API error: %s') % str(e)
+                _logger.error('Observium HTTP error: %s', e)
+            except Exception as e:
+                error = _('Unexpected error: %s') % str(e)
+                _logger.exception('Observium unexpected error')
+
+            if all_devices is None:
+                all_devices = []
+        else:
+            error = None
+
+        # Pagination
+        page      = max(1, int(page))
+        page_size = self._DEVICES_PAGE_SIZE
+        total     = len(all_devices)
+        total_pages = max(1, (total + page_size - 1) // page_size)
+        page      = min(page, total_pages)
+        offset    = (page - 1) * page_size
+        devices   = all_devices[offset: offset + page_size]
 
         values = {
-            'devices':        devices,
-            'device_count':   len(devices),
-            'group_code':     group_code,
-            'is_admin':       not is_portal,
-            'error':          error,
-            'identity_error': None,
-            'page_name':      'observium_devices',
+            'devices':           devices,
+            'device_count':      total,
+            'devices_up_count':  sum(1 for d in all_devices if str(d.get('status')) == '1'),
+            'devices_down_count': sum(1 for d in all_devices if str(d.get('status')) != '1'),
+            'group_code':        group_code,
+            'is_admin':          not is_portal,
+            'error':             error,
+            'identity_error':    None,
+            'page_name':         'observium_devices',
+            'page':              page,
+            'total_pages':       total_pages,
+            'page_size':         page_size,
         }
         return request.render('we_portal_observium.observium_devices_template', values)
 
@@ -336,7 +364,7 @@ class ObserviumPortalController(http.Controller):
         if not header_graphs:
             header_graphs = [(t, l, i) for t, l, i, _ in graph_types[:4]]
 
-        # Format uptime as human-readable string
+        # FIX #10 — Format uptime as human-readable string
         uptime_str = self._format_uptime(device.get('uptime') if device else None)
 
         values = {

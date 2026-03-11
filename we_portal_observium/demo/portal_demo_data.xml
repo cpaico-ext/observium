@@ -16,5 +16,40 @@
         <record id="we_portal_observium.portal_role_observium_default" model="portal.partner.role">
             <field name="contact_ids" eval="[(4, ref('base.res_partner_main1')), (4, ref('base.res_partner_main2'))]"/>
         </record>
+
+        <record id="portal_role_observium_3aamseq_demo" model="portal.partner.role">
+            <field name="name">Rol: Observium - 3AAMSEQ</field>
+            <field name="client_id" ref="we_portal_observium.partner_3aamseq_demo"/>
+            <field name="contact_ids" eval="[
+                (4, ref('we_portal_observium.contact_3aamseq_dany_horna')),
+                (4, ref('we_portal_observium.contact_3aamseq_enrique_orbegoso')),
+                (4, ref('we_portal_observium.contact_3aamseq_juan_huamanchumo')),
+                (4, ref('we_portal_observium.contact_3aamseq_norith_vela'))
+            ]"/>
+            <field name="dashboard_ids" eval="[(4, ref('we_portal_observium.dashboard_observium'))]"/>
+        </record>
+
+        <record id="portal_role_observium_ayv_demo" model="portal.partner.role">
+            <field name="name">Rol: Observium - AYV INVERSIONES</field>
+            <field name="client_id" ref="we_portal_observium.partner_av_inversiones_demo"/>
+            <field name="contact_ids" eval="[
+                (4, ref('we_portal_observium.contact_ayv_fernando_claverias')),
+                (4, ref('we_portal_observium.contact_ayv_marlenen_jannanpa')),
+                (4, ref('we_portal_observium.contact_ayv_melissa_valdiviezo')),
+                (4, ref('we_portal_observium.contact_ayv_mirela_manco')),
+                (4, ref('we_portal_observium.contact_ayv_roger_mallqui'))
+            ]"/>
+            <field name="dashboard_ids" eval="[(4, ref('we_portal_observium.dashboard_observium'))]"/>
+        </record>
+
+        <record id="portal_role_observium_banbif_demo" model="portal.partner.role">
+            <field name="name">Rol: Observium - BANBIF</field>
+            <field name="client_id" ref="we_portal_observium.partner_banbif_demo"/>
+            <field name="contact_ids" eval="[
+                (4, ref('we_portal_observium.contact_banbif_albert_dominguez')),
+                (4, ref('we_portal_observium.contact_banbif_cyndy_flores'))
+            ]"/>
+            <field name="dashboard_ids" eval="[(4, ref('we_portal_observium.dashboard_observium'))]"/>
+        </record>
     </data>
 </odoo>

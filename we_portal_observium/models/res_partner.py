@@ -11,7 +11,7 @@ class ResPartner(models.Model):
         string='Portal Roles',
     )
     
-    observium_group_code = fields.Char(
+    observium_code = fields.Char(
         string='Observium Group Code',
         help='Group code in Observium used to filter devices for this client.',
     )

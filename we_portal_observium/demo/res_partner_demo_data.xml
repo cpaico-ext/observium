@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+
+    <record id="partner_3aamseq_demo" model="res.partner">
+        <field name="name">3AAMSEQ S.A.</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_company" eval="True"/>
+        <field name="vat">20608931156</field>
+        <field name="street">Mza. B Lote. 05 Parque Industrial</field>
+        <field name="website">https://3aamseq.com.pe/</field>
+        <field name="city">Villa el Salvador</field>
+        <field name="tz">America/Lima</field>
+        <field name="country_id" ref="base.pe"/>
+        <field name="state_id" ref="base.state_pe_15"/>
+        <field name="observium_code">1797</field>
+        <field name="image_1920" type="base64" file="we_portal_observium/static/src/img/3aamsq.jpg"/>
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="partner_av_inversiones_demo" model="res.partner">
+        <field name="name">A Y V INVERSIONES INMOBILIARIAS ACTIVA S.A.C.</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_company" eval="True"/>
+        <field name="vat">20563245426</field>
+        <field name="street">Av. Iquitos Nro. 926 (Piso 7)</field>
+        <field name="city">La Victoria</field>
+        <field name="tz">America/Lima</field>
+        <field name="country_id" ref="base.pe"/>
+        <field name="state_id" ref="base.state_pe_15"/>
+        <field name="observium_code">944</field>
+        <field name="image_1920" type="base64" file="we_portal_observium/static/src/img/av_inversiones.jpg"/>
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="partner_banbif_demo" model="res.partner">
+        <field name="name">Banco Interamericano de Finanzas</field>
+        <field name="company_id" ref="base.main_company"/>
+        <field name="is_company" eval="True"/>
+        <field name="vat">20101036813</field>
+        <field name="street">Av. Ricardo Rivera Navarrete</field>
+        <field name="website">https://www.banbif.com.pe</field>
+        <field name="city">Lima</field>
+        <field name="tz">America/Lima</field>
+        <field name="country_id" ref="base.pe"/>
+        <field name="state_id" ref="base.state_pe_15"/>
+        <field name="observium_code">17</field>
+        <field name="image_1920" type="base64" file="we_portal_observium/static/src/img/banbif.png"/>
+        <field name="active" eval="True"/>
+    </record>
+
+
+    <record id="contact_3aamseq_dany_horna" model="res.partner">
+        <field name="name">Dany Horna</field>
+        <field name="email">dhorna@3aamseq-test.pe</field>
+        <field name="phone">934926623</field>
+        <field name="function">Soporte TI</field>
+        <field name="parent_id" ref="we_portal_observium.partner_3aamseq_demo"/>
+    </record>
+
+    <record id="contact_3aamseq_enrique_orbegoso" model="res.partner">
+        <field name="name">Enrique Javier Orbegoso Espinoza</field>
+        <field name="email">eorbegoso@3aamseq-test.pe</field>
+        <field name="phone">9946128</field>
+        <field name="function">Encargado de TI</field>
+        <field name="parent_id" ref="we_portal_observium.partner_3aamseq_demo"/>
+    </record>
+
+    <record id="contact_3aamseq_juan_huamanchumo" model="res.partner">
+        <field name="name">Juan Alberto Huamanchumo Aray</field>
+        <field name="email">lhuamanchumo@3aamseq-test.pe</field>
+        <field name="phone">453453466</field>
+        <field name="function">Gerente General</field>
+        <field name="parent_id" ref="we_portal_observium.partner_3aamseq_demo"/>
+    </record>
+
+    <record id="contact_3aamseq_norith_vela" model="res.partner">
+        <field name="name">Norith Vela Lozano</field>
+        <field name="email">norith@amseq3a-test.pe</field>
+        <field name="phone">657657675</field>
+        <field name="function">Administración</field>
+        <field name="parent_id" ref="we_portal_observium.partner_3aamseq_demo"/>
+    </record>
+
+    <record id="contact_ayv_fernando_claverias" model="res.partner">
+        <field name="name">Fernando Claverias</field>
+        <field name="email">fclaverias@lanumero1-test.pe</field>
+        <field name="phone">969776020</field>
+        <field name="function">Administradora</field>
+        <field name="parent_id" ref="we_portal_observium.partner_av_inversiones_demo"/>
+    </record>
+
+    <record id="contact_ayv_marlenen_jannanpa" model="res.partner">
+        <field name="name">Marlenen Jannanpa</field>
+        <field name="email">contratistas@yicongesac-test.pe</field>
+        <field name="function">Administradora</field>
+        <field name="parent_id" ref="we_portal_observium.partner_av_inversiones_demo"/>
+    </record>
+
+    <record id="contact_ayv_melissa_valdiviezo" model="res.partner">
+        <field name="name">Melissa Valdiviezo</field>
+        <field name="email">mvaldivieso@lanumero1-test.pe</field>
+        <field name="phone">969776020</field>
+        <field name="function">Administradora</field>
+        <field name="parent_id" ref="we_portal_observium.partner_av_inversiones_demo"/>
+    </record>
+
+    <record id="contact_ayv_mirela_manco" model="res.partner">
+        <field name="name">Mirela Manco</field>
+        <field name="email">aux.legal@lanumero1-test.pe</field>
+        <field name="phone">947624940</field>
+        <field name="function">Administracion</field>
+        <field name="parent_id" ref="we_portal_observium.partner_av_inversiones_demo"/>
+    </record>
+
+    <record id="contact_ayv_roger_mallqui" model="res.partner">
+        <field name="name">Roger Mallqui Pacheco</field>
+        <field name="email">mprogerf@test.com</field>
+        <field name="phone">980378725</field>
+        <field name="function">Asistente</field>
+        <field name="parent_id" ref="we_portal_observium.partner_av_inversiones_demo"/>
+    </record>
+
+    <record id="contact_banbif_albert_dominguez" model="res.partner">
+        <field name="name">Albert Domingues</field>
+        <field name="email">adominguez@banbif-test.pe</field>
+        <field name="phone">6133000</field>
+        <field name="function">Técnico</field>
+        <field name="parent_id" ref="we_portal_observium.partner_banbif_demo"/>
+    </record>
+
+    <record id="contact_banbif_cyndy_flores" model="res.partner">
+        <field name="name">Cyndy Flores Castillo</field>
+        <field name="email">cfloresc@banbif.test.pe</field>
+        <field name="phone">6133000</field>
+        <field name="function">Comercial</field>
+        <field name="parent_id" ref="we_portal_observium.partner_banbif_demo"/>
+    </record>
+
+</odoo>

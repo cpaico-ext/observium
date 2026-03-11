@@ -4,7 +4,7 @@
     <!--
         Hereda el template base del dashboard para inyectar el resumen
         del grupo Observium debajo del nombre y descripción del dashboard.
-        Solo visible cuando el partner tiene observium_group_code configurado.
+        Solo visible cuando el partner tiene observium_code configurado.
     -->
     <template id="portal_dashboard_detail_observium"
               name="Portal: Dashboard Detail (Observium group info)"
